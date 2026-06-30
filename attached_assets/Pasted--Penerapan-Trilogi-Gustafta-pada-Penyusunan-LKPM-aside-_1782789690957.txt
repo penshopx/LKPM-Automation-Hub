@@ -1,0 +1,417 @@
+# Penerapan Trilogi Gustafta pada Penyusunan LKPM
+
+<aside>
+📚
+
+Menerapkan **Trilogi Gustafta (Trilogi DIALOG)** — *DIALOG · KOLABORASI · KREASI* — sebagai metode kerja end-to-end untuk menyusun & melaporkan **LKPM** melalui OSS, dipadukan dengan arsitektur agen **MultiClaw-OpenClaw** pada blueprint induk.
+
+</aside>
+
+<aside>
+🧩
+
+**Inti gagasan:** LKPM bukan sekadar “mengisi formulir” (monolog), melainkan **berdialog dengan data → berkolaborasi dengan tim agen → mencipta laporan yang kredibel & anti-fabrikasi**. Tiga buku = tiga fase kerja.
+
+</aside>
+
+## 0. Peta Cepat: Trilogi → Fase LKPM
+
+| Buku Trilogi | Esensi | Fase LKPM yang Dipraktikkan | Agen Utama |
+| --- | --- | --- | --- |
+| **Buku I · DIALOG** | Dari monolog ke dialog Socratic | Intake & Pengumpulan data (memahami, bukan menyalin) | S1, S2 |
+| **Buku II · KOLABORASI** | Tim manusia + agen, *human gate* | Validasi, Penyusunan, Review, Submission | S3, S4, S5 |
+| **Buku III · KREASI** | Studio 5-agen + anti-halusinasi | Narasi, lampiran, audit, arsip | S4, S6 |
+
+---
+
+## 1. Buku I — DIALOG: Fase “Memahami Sebelum Mengisi”
+
+> Buku I: *“manusia bertumbuh ketika ia berdialog — ketika ia ditanya, ditantang, dipancing berpikir…”*
+> 
+
+Dalam LKPM, kesalahan terbesar adalah mengisi formulir OSS secara **monolog** — menyalin angka tanpa memahami konteksnya. Trilogi mengubahnya menjadi **dialog terstruktur (Dialog Gustafta)**: agen mewawancarai perusahaan secara Socratic agar data yang masuk benar-benar dipahami dan dapat dipertanggungjawabkan.
+
+### Protokol Dialog Intake LKPM (Socratic)
+
+| Tahap Dialog | Pertanyaan Pemandu (Socratic) | Tujuan |
+| --- | --- | --- |
+| Klarifikasi Identitas | “Apa skala usaha & jenis perizinan Anda — NIB saja, NIB+SS, atau +Izin? Apakah SS sudah terverifikasi?” | Menentukan kewajiban & periode lapor |
+| Menggali Realisasi | “Berapa modal tetap vs modal kerja yang benar-benar terealisasi periode ini, dan dari sumber catatan mana?” | Memastikan angka bersumber, bukan estimasi |
+| Menantang Asumsi | “Mengapa nilai produksi naik/turun? Apakah konsisten dengan penyerapan tenaga kerja?” | Mendeteksi inkonsistensi sejak awal |
+| Refleksi Kendala | “Kendala apa yang nyata dihadapi, dan tindak lanjut apa yang sudah/akan dilakukan?” | Menyiapkan narasi kendala yang jujur |
+| Konfirmasi Pemahaman | “Jika saya rangkum seperti ini, apakah sudah benar dan lengkap?” | Gate pemahaman sebelum data dikunci |
+
+<aside>
+✅
+
+**Output Buku I:** Data realisasi yang *dipahami & bersumber* — mengisi Gate G1–G2 pada pipeline. Dipraktikkan oleh **S1 (Kepatuhan)** dan **S2 (Pengumpulan Data)**.
+
+</aside>
+
+---
+
+## 2. Buku II — KOLABORASI: Fase “Kerja Tim Manusia + Agen”
+
+> Buku II: *“Dari tool ke rekan · Dari efisiensi ke skala sentuhan · Dari pengetahuan langka ke pertimbangan langka.”*
+> 
+
+### 2.1 Tiga Lapis Reset — diterapkan pada LKPM
+
+| Lapis Reset (Buku II) | Praktik pada LKPM |
+| --- | --- |
+| **Reset Tugas** | Agen mengekstrak data dari GL/HRIS/PDF BPJS, meringkas, mengklasifikasi modal tetap vs kerja. |
+| **Reset Peran** | Staf keuangan/HR beralih dari *pengisi data* menjadi *pengawas output agen* dan penangani kasus tepi. |
+| **Reset Arsitektur** | Seluruh pipeline LKPM dijalankan agen yang saling memicu; manusia hanya masuk di titik pertimbangan (Gate). |
+
+### 2.2 Tiga Pergeseran — diterapkan pada LKPM
+
+- **Dari tool ke rekan** → Agen S6.1 *mengingat* deadline triwulan/semester dan **mengetuk pintu** (early-warning H-30/14/7/3/1), bukan menunggu dipanggil.
+- **Dari efisiensi ke skala sentuhan** → Tujuan bukan sekadar cepat, tapi **akurat & kontekstual** per perusahaan (skala, KBLI, status SS berbeda-beda).
+- **Dari pengetahuan langka ke pertimbangan langka** → Yang bernilai bukan “tahu cara isi OSS”, melainkan **pertimbangan** penanggung jawab di Gate G4: *“tunggu, angka ini belum boleh diteruskan.”*
+
+### 2.3 Pemetaan Pekerjaan 3 Lapis (kompas Buku II)
+
+| Kategori | Contoh pada LKPM | Pelaku |
+| --- | --- | --- |
+| **Harus tetap manusia — selamanya** | Persetujuan akhir, pertimbangan etis, tanda tangan/komitmen kebenaran data | Penanggung jawab / Direksi |
+| **Bisa dilipat dengan agen — segera** | Ekstraksi data, rekonsiliasi, mapping field OSS, pengingat deadline | S2, S3, S4, S6 |
+| **Diciptakan ulang — dengan kebijaksanaan** | Sistem *audit trail* real-time & dasbor kepatuhan lintas perusahaan | S6.3 + manusia |
+
+<aside>
+🚪
+
+**Human Gate (gerbang manusia):** Tidak ada satu pun laporan LKPM dikirim ke OSS tanpa melewati **Gate G4 (persetujuan manusia)**. Ini penerapan langsung prinsip “pertimbangan langka” Buku II.
+
+</aside>
+
+---
+
+## 3. Buku III — KREASI: Fase “Mencipta Laporan yang Kredibel”
+
+> Buku III: *“riset → naskah → visual → distribusi… sambil tetap mempertahankan suara manusia”* dan **anti-halusinasi**.
+> 
+
+### 3.1 Studio 5-Agen Kreator → dipetakan ke Penyusunan LKPM
+
+| Agen Kreator (Buku III) | Peran pada LKPM | Agen MultiClaw |
+| --- | --- | --- |
+| **Researcher** | Kumpulkan regulasi & data realisasi bersumber | S1, S2 |
+| **Narrator** | Susun narasi kendala & tindak lanjut dengan “suara” perusahaan | S4.2 |
+| **Visualizer** | Rapikan tabel realisasi, lampiran & bukti | S4.1, S4.3 |
+| **Distributor** | Input & kirim ke OSS, simpan tanda terima | S5 |
+| **Auditor** | Verifikasi anti-halusinasi & jejak audit | S3, S6.3 |
+
+### 3.2 Etika Anti-Halusinasi (Anti-Blocking Doctrine) — WAJIB untuk LKPM
+
+LKPM adalah dokumen hukum berisi angka; satu angka fabrikasi berisiko sanksi. Maka tiga pilar etika Buku III menjadi non-negotiable:
+
+- **Transparansi** → Tandai status tiap data: terverifikasi / perlu verifikasi / estimasi.
+- **Verifikasi** → *Citation by default*: setiap angka realisasi wajib menunjuk sumber (GL, HRIS, bukti BPJS, faktur).
+- **Atribusi** → Catat siapa/sistem apa yang menghasilkan tiap angka dalam *audit trail*.
+
+<aside>
+⛓️
+
+**Prinsip Anti-Fabrikasi LKPM:** *“Tidak ada angka tanpa sumber. Tidak ada klaim tanpa bukti. Tidak ada pengiriman tanpa pertimbangan manusia.”* — jika data tidak dapat diverifikasi, agen **memblokir** (Anti-Blocking Doctrine), menandai *confidence rendah*, dan mengembalikannya ke S2.
+
+</aside>
+
+### 3.3 Suara Manusia & Edit-with-Grain (80/20)
+
+- Agen menyusun **80%** draf LKPM (data, tabel, mapping OSS, draf narasi).
+- Penanggung jawab menyentuh **20% yang menentukan**: pertimbangan kebenaran, nuansa kendala, keputusan kirim. Inilah “tanda tangan manusia” pada laporan.
+
+---
+
+## 4. Alur Terpadu: Trilogi × Pipeline 8 Tahap
+
+| Tahap Pipeline | Buku yang Dipraktikkan | Praktik Konkret |
+| --- | --- | --- |
+| [1] Intake | I · DIALOG | Wawancara Socratic skala usaha, jenis perizinan, status SS |
+| [2] Collect | I · DIALOG | Gali data realisasi bersumber via dialog terarah |
+| [3] Validate | II + III | Auditor + rekonsiliasi; blokir data tak bersumber |
+| [4] Draft | III · KREASI | Narrator + Visualizer susun draf & narasi kendala |
+| [5] Review | II · KOLABORASI | Human gate G4: pertimbangan & persetujuan manusia |
+| [6] Submit | III · KREASI | Distributor kirim ke OSS, simpan tanda terima |
+| [7] Monitor | II · KOLABORASI | Agen sebagai rekan: pantau & tanggapi klarifikasi BKPM |
+| [8] Archive | III · KREASI | Atribusi & audit trail penuh; pengingat periode berikutnya |
+
+## 5. Checklist Kepatuhan Trilogi (sebelum Submit)
+
+- [ ]  **DIALOG**: Data digali lewat dialog Socratic, bukan disalin buta
+- [ ]  **DIALOG**: Pemahaman dikonfirmasi ulang ke pemilik data (Gate pemahaman)
+- [ ]  **KOLABORASI**: Tugas yang dilipat agen sudah benar; peran manusia jelas
+- [ ]  **KOLABORASI**: Melewati Human Gate G4 (pertimbangan & persetujuan)
+- [ ]  **KREASI**: Setiap angka punya sumber (citation by default)
+- [ ]  **KREASI**: Status confidence tiap data ditandai (terverifikasi/perlu verifikasi)
+- [ ]  **KREASI**: Narasi kendala memakai “suara” perusahaan (edit-with-grain 20%)
+- [ ]  **KREASI**: Audit trail & atribusi tersimpan
+
+---
+
+## 6. Pembaruan: Dua Mode Operasi & “Menghidupkan Dokumen”
+
+<aside>
+🔄
+
+**Pemikiran Anda tepat.** Tidak semua elemen Trilogi berlaku seragam untuk LKPM. Kuncinya: **utamakan dialog manusia–agen; namun saat manusia absen, dokumen menjadi partner dialog dan orchestrator bidang menjaga laporan tetap tersusun.**
+
+</aside>
+
+### 6.1 Dua Mode Operasi
+
+| Mode | Kapan Aktif | Partner Dialog | Penggerak | Buku Dominan |
+| --- | --- | --- | --- | --- |
+| **Mode A — Dialogis** (utama) | Ada orang di lini | Manusia ↔ Agen | Orang berkoordinasi dengan agen spesialis | I & II |
+| **Mode B — Document-Grounded Autonomous** (fallback) | Orang tidak hadir | Agen ↔ Dokumen | Orchestrator bidang mengorkestrasi sub-spesialis | II (orkestrasi) & III (produksi) |
+
+### 6.2 Prioritas & Eskalasi
+
+- **Prioritas:** setiap lini punya orang sebagai pengendali; agen spesialis berkoordinasi dengannya (Mode A).
+- **Bila orang absen di satu lini** → **Orchestrator bidang** otomatis mengambil alih dan mengorkestrasi sub-spesialis (Mode B).
+- **Hasil:** dokumen LKPM tetap dibuat & disusun tanpa terhenti, meski tanpa dialog manusia–agen saat itu.
+
+### 6.3 Menghidupkan Dokumen (Document as Living Source of Truth)
+
+Saat dialog manusia tak tersedia, “lawan bicara” agen adalah **dokumen**. Agar dokumen bisa “berbicara”:
+
+- **Terstruktur & machine-readable** — field, metadata, schema; dokumen menjawab kueri agen (prinsip *grounding*).
+- **Single source of truth** — Tracker LKPM + dokumen sumber (GL, HRIS, bukti BPJS, regulasi) menjadi rujukan tunggal.
+- **Melekatkan versi, status, sumber, & confidence** — dokumen menjadi “hidup”, bukan kertas mati.
+- **Loop kerja:** agen *membaca → mengacu → menyusun → menulis kembali* ke dokumen — sehingga dokumen terus tumbuh & terverifikasi.
+
+### 6.4 Batas yang Tidak Boleh Dilanggar (penajaman progresif)
+
+<aside>
+⚠️
+
+**Otonomi produksi ≠ otonomi tanggung jawab.** Mode B boleh otonom menyusun *draf*, tetapi **komitmen/pengiriman ke OSS** tetap menuntut akuntabilitas manusia.
+
+</aside>
+
+- Pengiriman LKPM minimal harus berlandaskan: **(a)** delegasi kebijakan yang disetujui sebelumnya, **atau** **(b)** verifikasi manusia tertunda (*deferred*) + audit trail wajib.
+- Alasan: LKPM adalah dokumen hukum. Prinsip **anti-fabrikasi** (Buku III) dan **“pertimbangan langka”** (Buku II) tidak boleh dihapus total — Human Gate G4 boleh *ditunda*, tetapi tidak boleh *ditiadakan*.
+
+### 6.5 Bagian Trilogi yang Tidak Sepenuhnya Berlaku pada LKPM
+
+- **“Suara kreatif / voice” (Buku III)** → diganti **presisi faktual**. LKPM tidak butuh gaya bercerita, melainkan akurasi angka.
+- **Dialog Socratic terbuka (Buku I)** → di Mode B menyempit menjadi **interogasi terstruktur atas dokumen** (query field), bukan percakapan bebas.
+- **Edit-with-grain 80/20** → tetap relevan, tetapi “20% sentuhan manusia” adalah **pertimbangan kebenaran**, bukan sentuhan estetika.
+
+---
+
+## 7. Detail Operasional: Mode B & Menghidupkan Dokumen
+
+<aside>
+🧬
+
+**Tujuan bagian ini:** menurunkan gagasan “dokumen hidup” + pengambilalihan orchestrator menjadi mekanisme yang dapat dijalankan — lengkap dengan pemicu, batas, dan guardrail anti-fabrikasi.
+
+</aside>
+
+### 7.1 Anatomi “Dokumen yang Hidup” — 6 Lapis Metadata
+
+Agar dokumen bisa “berbicara” dengan agen (bukan kertas mati), setiap *data point* LKPM perlu enam lapis:
+
+| # | Lapis | Isi | Contoh | Kolom Tracker |
+| --- | --- | --- | --- | --- |
+| 1 | **Nilai** | Angka/teks realisasi | Rp 7,2 M | Realisasi Investasi (Rp) |
+| 2 | **Sumber** | *Provenance* data | GL-2026-Q2, baris 88 | *Sumber Data* (baru) |
+| 3 | **Status** | Tahap keyakinan | Terverifikasi | *Status Data* (baru) |
+| 4 | **Confidence** | Skor 0–100 | 95 | *Confidence* (baru) |
+| 5 | **Versi** | Waktu + pelaku | 2026-06-28 / S2.1 | Catatan / audit trail |
+| 6 | **Instruksi** | Aturan melekat | “TW II jatuh tempo 10 Jul” | Batas Akhir / formula |
+
+### 7.2 Loop Dialog Agen ↔ Dokumen (Grounding)
+
+Saat manusia absen, dokumen menjadi lawan bicara. Mekanismenya berputar dalam 6 langkah:
+
+1. **READ** — Orchestrator membaca *state* dokumen (field kosong, status, confidence).
+2. **ASK** — Merumuskan kueri: “Field mana yang belum terisi atau belum terverifikasi?”
+3. **RETRIEVE** — Sub-spesialis menarik data dari sumber (GL, HRIS, OSS, regulasi).
+4. **RECONCILE** — Cocokkan antar-field & deteksi anomali (mis. produksi vs tenaga kerja).
+5. **WRITE-BACK** — Tulis nilai + sumber + confidence kembali ke dokumen.
+6. **FLAG** — Bila gagal verifikasi → tandai, blokir (ABD), dan antrekan untuk manusia.
+
+### 7.3 Logika Eskalasi & Pengambilalihan Orchestrator
+
+| Kondisi Lini | Pengendali | Mode | Catatan |
+| --- | --- | --- | --- |
+| Orang hadir & aktif | Orang + agen spesialis | A | Default — dialog penuh |
+| Orang hadir, tak merespons (SLA lewat) | Orchestrator bidang (sementara) | A→B | Kirim notifikasi, lanjut menyiapkan draf |
+| Orang tidak hadir | Orchestrator bidang | B | Dokumen tetap disusun |
+| Orang & orchestrator bidang absen | **LKPM-COMMANDER** | B | Eskalasi puncak lintas-bidang |
+
+<aside>
+⏱️
+
+**Contoh aturan SLA:** Jika H-7 sebelum deadline tidak ada respons manusia di suatu lini, Mode B aktif otomatis untuk lini tersebut — draf tetap berjalan, persetujuan ditahan di Gate G4.
+
+</aside>
+
+### 7.4 Protokol Akuntabilitas Tertunda (*Deferred Human Gate*)
+
+- **Pra-otorisasi:** penanggung jawab menetapkan kebijakan ambang lebih dulu (mis. *“auto-draf boleh; auto-submit hanya bila confidence ≥ 95 & semua data bersumber”*).
+- **Status antara:** draf otonom disimpan sebagai **“Menunggu Verifikasi Manusia”**.
+- **Aturan kirim:**
+    - Confidence ≥ ambang **dan** lengkap **dan** ada pra-otorisasi → boleh *auto-submit*, lalu **wajib review tertunda** (mis. ≤ 3 hari).
+    - Selain itu → **tahan di G4**, tunggu pertimbangan manusia.
+- **Pembetulan:** bila review tertunda menemukan kesalahan → ajukan **pembetulan LKPM** + catat di audit trail.
+
+### 7.5 Perilaku Per-Tahap: Mode A vs Mode B
+
+| Tahap | Mode A (ada orang) | Mode B (orang absen) |
+| --- | --- | --- |
+| Intake | Wawancara Socratic ke manusia | Interogasi field dari dokumen/OSS |
+| Collect | Orang mengarahkan & konfirmasi | Agen menarik dari sumber, *confidence-scored* |
+| Validate | Manusia + Auditor | Auditor agen + aturan anomali ketat |
+| Draft | Kolaborasi manusia–agen | Narrator/Visualizer menyusun otonom |
+| Review (G4) | Persetujuan langsung | **Tahan** ATAU auto + review tertunda |
+| Submit | Setelah disetujui | Hanya bila lolos ambang pra-otorisasi |
+| Monitor | Orang + agen | Orchestrator + *early-warning* |
+| Archive | Audit trail | Audit trail (atribusi: agen) |
+
+### 7.6 Guardrail Anti-Fabrikasi di Mode Otonom
+
+- **Ambang blokir:** confidence < 80 **atau** sumber kosong → tidak boleh masuk draf final.
+- **Anomali wajib-manusia:** lonjakan/penurunan ekstrem, atau ketidakcocokan tenaga kerja vs produksi → paksa kembali ke Mode A.
+- **Larangan mengarang:** agen tidak boleh mengisi angka tanpa sumber — lebih baik **dikosongkan + di-flag**.
+- **Audit trail immutable:** setiap penulisan otonom tercatat (siapa/kapan/sumber).
+- **Kill-switch:** manusia dapat menghentikan & mengambil alih kapan saja.
+
+### 7.7 Indikator Kesiapan Mode B (prasyarat)
+
+- [ ]  Sumber data terhubung & dapat dibaca agen (GL / HRIS / OSS)
+- [ ]  Kebijakan pra-otorisasi & ambang confidence ditetapkan
+- [ ]  Kolom *Sumber Data*, *Status Data*, *Confidence* aktif di tracker
+- [ ]  SLA respons & jalur eskalasi disepakati
+- [ ]  Audit trail & mekanisme pembetulan LKPM siap
+
+---
+
+## 8. Buku III sebagai Muara: Dari Dialog & Kolaborasi → Kreasi
+
+<aside>
+🌱
+
+**Kreasi adalah buah, bukan titik awal.** Dialog menumbuhkan *pemahaman*; kolaborasi menumbuhkan *keandalan*; keduanya bermuara pada **kreasi** — laporan LKPM yang kredibel beserta aset pengetahuan yang lahir bersamanya. LKPM tidak “diisi”, melainkan **dicipta**.
+
+</aside>
+
+### 8.1 Rantai Nilai: Bagaimana Dialog & Kolaborasi Berbuah Kreasi
+
+| Tahap | Buku | Yang Tumbuh | Buah |
+| --- | --- | --- | --- |
+| **Dialog** | I | Pemahaman (data dipahami, bukan disalin) | Data bersumber & jernih |
+| **Kolaborasi** | II | Keandalan (tim manusia + agen, gate) | Data tervalidasi & terpercaya |
+| **Kreasi** | III | Kredibilitas (artefak tercipta) | Laporan + aset pengetahuan |
+
+### 8.2 Persamaan Kreasi
+
+> **Dialog (kejernihan) × Kolaborasi (keandalan) = Kreasi (kredibilitas).**
+> 
+
+Tanpa dialog, kreasi merosot jadi **fabrikasi**. Tanpa kolaborasi, kreasi jadi **rapuh**. Keduanya prasyarat agar laporan benar-benar *tercipta*, bukan sekadar *terisi*.
+
+### 8.3 Empat Lapis Kreasi LKPM (lebih dari sekadar laporan)
+
+Kreasi sejati menghasilkan lebih dari satu dokumen:
+
+1. **Laporan LKPM** — artefak utama: akurat, bersumber, siap submit.
+2. **Audit trail & provenance** — kreasi *kepercayaan*: setiap angka punya jejak (kolom Sumber Data, Status Data, Confidence).
+3. **Aset pengetahuan** — pola kendala, benchmark realisasi, narasi yang dapat dipakai ulang lintas periode.
+4. **Sistem yang memperbaiki diri** — tiap siklus pelaporan menyempurnakan template, ambang confidence, & mutu dialog.
+
+### 8.4 Studio 5-Agen sebagai Mesin Kreasi
+
+Dari bahan mentah dialog & kolaborasi, studio Buku III mengubahnya menjadi karya:
+
+- **Researcher (S1, S2)** → menyediakan bahan baku bersumber.
+- **Auditor (S3)** → menjamin keandalan (memblokir yang tak terverifikasi).
+- **Narrator (S4.2)** → memberi *makna* (narasi kendala & tindak lanjut).
+- **Visualizer (S4.1, S4.3)** → memberi *bentuk* (tabel realisasi, lampiran, bukti).
+- **Distributor (S5)** → menghantar karya ke OSS & menyimpan tanda terima.
+
+### 8.5 Tiga Kolom Baru = Disiplin Kreasi yang Operasional
+
+Tiga kolom yang baru ditambahkan ke **Tracker LKPM** adalah perwujudan langsung disiplin kreasi Buku III — inilah cara dialog & kolaborasi “membeku” menjadi kreasi yang dapat dipertanggungjawabkan:
+
+| Kolom Baru | Pilar Buku III | Fungsi |
+| --- | --- | --- |
+| **Sumber Data** | Verifikasi / Atribusi | Setiap angka menunjuk asalnya (*citation by default*) |
+| **Status Data** | Transparansi | Menandai Terverifikasi / Perlu Verifikasi / Estimasi / Belum Ada Sumber |
+| **Confidence (0–100)** | Anti-halusinasi | Skor keyakinan; ambang blokir < 80 |
+
+<aside>
+🎨
+
+**Hasil akhir:** Dialog memberi laporan **kebenaran**, kolaborasi memberinya **kekuatan**, dan kreasi memberinya **nilai yang bertahan** melampaui satu periode pelaporan. Itulah muara Trilogi Gustafta pada LKPM.
+
+</aside>
+
+<aside>
+📝
+
+**Sumber metodologi:** Diturunkan dari tiga ebook Trilogi Gustafta milik pengguna — *Buku I: Dari Monolog ke Dialog*, *Buku II: Dari Dialog ke Kolaborasi*, *Buku III: Kreasi — Membuka Tabir Kreator*.
+
+</aside>
+
+---
+
+## 9. Adaptasi per Skala Usaha: Satu Sistem, Tiga Konfigurasi
+
+<aside>
+⚖️
+
+**Kewajiban sama, kapasitas berbeda.** Kecil, Menengah, dan Besar sama-sama wajib LKPM — tetapi sumber dayanya jauh berbeda. Sistem harus **menyesuaikan beban & mode kerja**, bukan memaksakan proses yang seragam. Bagi perusahaan kecil dengan 1–2 orang & peran rangkap, aplikasi menjadi **pendamping**, bukan beban tambahan.
+
+</aside>
+
+### 9.1 Realitas Tiap Skala
+
+| Skala | Kondisi SDM Khas | Frekuensi Lapor | Tantangan Utama |
+| --- | --- | --- | --- |
+| **Kecil** | 1–2 orang, peran rangkap (mis. istri komanditer; suami direktur + pelaksana); tanpa staf keuangan/HR | Semesteran | Waktu, keahlian, & ingatan terbatas |
+| **Menengah** | Ada staf admin/keuangan; peran mulai terpisah | Triwulanan | Konsistensi data antar fungsi |
+| **Besar** | Tim lengkap; multi-proyek / banyak KBLI | Triwulanan | Volume besar & rekonsiliasi kompleks |
+
+### 9.2 Konfigurasi Sistem per Skala
+
+| Aspek | Kecil | Menengah | Besar |
+| --- | --- | --- | --- |
+| **Mode default** | Mode B — *Pendamping UMK* (agen mengerjakan) | Hibrida A/B | Mode A — *human-in-loop* penuh |
+| **Human Gate** | 1 konfirmasi sadar (“Saya nyatakan benar”) | G4 ringkas | Gate berlapis G1–G5 |
+| **Peran manusia** | 1 orang = pemilik + penyetuju + pelaksana (rangkap diterima) | PIC + atasan | Pemisahan tugas (maker–checker) |
+| **Agen aktif** | Orchestrator + S1, S2, S4, S5 (S3 ringkas) |   • S3 validasi | Semua S1–S6 + sub-agen |
+| **Gaya intake** | Dialog super-ringkas, bahasa awam | Standar | Lengkap & mendetail |
+| **Sumber data** | Foto/unggah nota → agen ekstrak | Semi-otomatis dari catatan | Integrasi GL/HRIS |
+
+### 9.3 Mode “Pendamping UMK” — Solusi Keterbatasan Sumber Daya
+
+Dirancang khusus untuk perusahaan kecil dengan 1–2 orang & peran rangkap:
+
+- **Asas “usaha minimal, kepatuhan maksimal”** — pemilik cukup menjawab beberapa pertanyaan terpandu lalu menyetujui sekali; agen mengerjakan sisanya.
+- **Peran rangkap diakomodasi** — satu orang boleh sekaligus PIC, penyetuju, dan pelaksana. Sistem **tidak memaksakan** pemisahan tugas yang mustahil bagi mereka.
+- **Bahasa membumi** — hindari jargon OSS; pertanyaan dipandu langkah demi langkah.
+- **Toleransi sumber data** — bila tak ada GL formal, agen memandu dari buku kas/foto nota, menandai *Estimasi* + confidence, lalu meminta verifikasi ringan.
+- **Pengingat lebih proaktif** — risiko lupa tinggi, maka *early-warning* H-30/14/7/3/1 dan tetap mengingatkan bila sudah lewat.
+- **Auto-isi maksimal** — agen menghitung realisasi, memetakan field OSS, dan menyiapkan draf; manusia tinggal memeriksa & menyetujui.
+
+### 9.4 Human Gate yang Proporsional (tetap anti-fabrikasi)
+
+<aside>
+🚪
+
+Gate tidak dihapus, hanya **diproporsikan**. Untuk Kecil, gate menyatu menjadi **satu pernyataan mandiri** — sejalan semangat *SS Pernyataan Mandiri* — sehingga akuntabilitas tetap ada tanpa birokrasi.
+
+</aside>
+
+- **Kecil** → *self-declaration* (“Saya menyatakan data ini benar”) = akuntabilitas cukup.
+- **Menengah** → PIC menyiapkan, atasan menyetujui.
+- **Besar** → *maker–checker* penuh + persetujuan berlapis.
+
+### 9.5 Implikasi pada Aplikasi
+
+- Properti **Skala Usaha** menjadi *pemicu konfigurasi* (mode, gate, agen, gaya intake).
+- Ditambahkan properti **Mode Operasi** (*Pendamping UMK / Hibrida / Penuh*) agar tiap baris tahu cara diperlakukan.
+- Dapat dibuat view & template intake berbeda per skala usaha.

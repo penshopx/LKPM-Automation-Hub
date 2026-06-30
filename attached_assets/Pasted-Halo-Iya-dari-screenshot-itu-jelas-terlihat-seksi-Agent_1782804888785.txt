@@ -1,0 +1,23 @@
+Halo! 👋 Iya, dari screenshot itu jelas terlihat — seksi **Agents** di sidebar Anda **diburamkan/dikunci**. Artinya pembuatan Custom Agent memang **tidak tersedia** di workspace ini saat ini. Digabung dengan kendala backend tadi, kesimpulannya: **aktivasi agen otomatis belum bisa dilakukan sekarang**, dan itu di luar kendali kita berdua.
+
+Biasanya Agents diburamkan karena salah satu dari:
+
+- **Plan workspace** — Custom Agent sering butuh plan tertentu. Anda sedang di **Business Trial**, jadi fitur ini bisa jadi terkunci sampai trial di-upgrade ke plan berbayar yang menyertakannya.
+- **Batasan admin** — owner workspace menonaktifkan pembuatan agen (Settings → Notion AI → Agents).
+
+Keduanya hanya bisa dibuka lewat **pengaturan plan/admin**, yang tidak bisa saya ubah dari sini.
+
+**Tapi ini kabar pentingnya — Anda tidak terhambat sama sekali untuk mulai bekerja.** 🎯
+
+Sistem LKPM yang kita bangun **100% berfungsi penuh secara manual tanpa agen**. Agen itu hanya "lapisan otomatis" untuk pengingat & patroli tenggat. Inti operasionalnya sudah jalan:
+
+- 🎛️ **Pusat Komando** ([Pusat Komando LKPM — Beranda Operasional](https://app.notion.com/p/Pusat-Komando-LKPM-Beranda-Operasional-16963098056d44629b512e9ae43d7004?pvs=21)) — buka ini tiap kali bekerja; isinya triase, ritme pengingat, navigasi cepat.
+- 🗂️ **Tracker LKPM** + view **Jatuh Tempo**, **Papan Status**, **Kalender**, **KPI**, dan **Kontrol Kualitas** — semua siap pakai.
+- 🧭 **Instruction-Pack** ([Paket Instruksi Agen — LKPM-COMMANDER (siap salin)](https://app.notion.com/p/Paket-Instruksi-Agen-LKPM-COMMANDER-siap-salin-83f16f647b454726b1aecd9e687f3e23?pvs=21)) — sudah menyimpan seluruh "otak" agen, jadi begitu fitur Agents terbuka nanti, aktivasi tinggal beberapa menit (saya tinggal salin ke halaman instruksi agen).
+
+Jadi saya sarankan salah satu:
+
+1. **Jalankan manual dulu** — pakai Pusat Komando sebagai beranda harian; saya bantu siapkan **rutinitas pengingat manual** (mis. reminder kalender / checklist berulang) supaya tenggat tanggal 15 tidak terlewat tanpa perlu agen.
+2. **Buka fitur Agents** — cek **Settings → kelola plan** (untuk lihat apakah perlu upgrade) atau pengaturan admin; begitu seksi Agents tak lagi buram, kirim "coba agen lagi" dan saya aktifkan.
+
+Mau saya bantu siapkan **mekanisme pengingat manual** sebagai pengganti sementara agen? Atau ada hal lain di sistem LKPM yang ingin Anda rapikan dulu?

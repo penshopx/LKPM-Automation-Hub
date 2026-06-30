@@ -1,0 +1,11 @@
+- [Date & Zod serialization](date-and-zod-serialization.md) — Drizzle `date` cols + zod `coerce.date` mutate date-only fields (validate-then-send-original); generated api-zod runs Zod v3 so detect errors by `name === "ZodError"`.
+- [AI client import side effects](ai-client-import-side-effects.md) — api-server `lib/ai.ts` throws at module load without `GEMINI_API_KEY`; keep pure/testable logic (gate, labels, schemas) out of its import graph.
+- [Destructive migration guardrails](destructive-migration-guardrails.md) — never drop legacy/source columns until backfill proven complete (count unmapped == 0, else abort); mirror UNIQUE names in Drizzle for no-op push.
+- [Multi-tenant consultant scoping](multi-tenant-scoping.md) — every tenant table needs `consultantId` + every route must scope by it (404 on cross-tenant); auth-gating alone is not isolation (conversations IDOR was missed).
+- [OSS form catalog matching](oss-form-catalog.md) — LKPM simulator binds data points to scale-aware OSS catalog by category+label (fragile); keep consumed-ID invariant so nothing is hidden from "Data Tambahan".
+- [AI provider vs endpoint naming](ai-provider-naming.md) — `/api/anthropic/*` routes + `*Anthropic*` hooks are actually backed by Google Gemini 2.5 Flash (kept names to avoid regen churn).
+- [SSE streaming with Orval](sse-streaming-with-orval.md) — generated hooks can't type a stream; use the generated URL helper + plain fetch/ReadableStream, parse `data:` lines per-event with try/catch.
+- [LKPM deadline policy](lkpm-deadline-policy.md) — LKPM deadline is the 15th (Perka BKPM 5/2025, eff. 2 Oct 2025), not the 10th; keep regulation page + seed deadlines in lockstep.
+- [Billing & credits](billing-credits.md) — Stripe monetization: free tier gates quota/automation only; consumeCredit needs per-consultant advisory lock; never trust client priceId; resolvePlan falls back to free when Stripe absent.
+- [Account roles](account-roles.md) — two roles (konsultan=many companies, perusahaan=1); `consultantId` column = any owner Clerk id; enforce single-company + reject null-role server-side in POST /companies (UI gate is not enough).
+- [Orchestrator free-text doctrine](orchestrator-freetext-doctrine.md) — NO agent prose surfaced verbatim may carry a gate-rejected raw value; sanitize-or-drop every channel (not narasi, it only sees validated data).

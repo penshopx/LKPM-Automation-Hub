@@ -1,0 +1,19 @@
+Permintaan Anda sangat tepat — sistem harus memperlakukan Kecil, Menengah, dan Besar secara berbeda sesuai kapasitasnya. Saya akan: (1) menambahkan Bab 9 desain adaptasi per skala ke halaman metodologi, dan (2) menambahkan properti **Mode Operasi** ke tracker agar pembedaan ini operasional. Keduanya saya kerjakan paralel dulu.
+
+Bab 9 dan properti **Mode Operasi** sudah dibuat. Sekarang saya isikan Mode Operasi pada keempat baris contoh sesuai skalanya.
+
+Selesai. Sistem kini membedakan perlakuan per skala usaha secara nyata — baik di desain maupun di database.
+
+**Yang ditambahkan:**
+
+**Bab 9 — Adaptasi per Skala Usaha: Satu Sistem, Tiga Konfigurasi** (di halaman metodologi) dengan prinsip *"kewajiban sama, kapasitas berbeda"*:
+
+- **9.1 Realitas tiap skala** — termasuk kondisi Kecil dengan 1–2 orang & peran rangkap (istri komanditer, suami direktur + pelaksana).
+- **9.2 Konfigurasi sistem per skala** — Mode, Human Gate, peran manusia, agen aktif, gaya intake, dan sumber data dibedakan untuk Kecil/Menengah/Besar.
+- **9.3 Mode "Pendamping UMK"** — solusi khusus keterbatasan sumber daya: usaha minimal–kepatuhan maksimal, peran rangkap diterima, bahasa membumi, input dari foto nota, pengingat lebih proaktif, auto-isi maksimal.
+- **9.4 Human Gate proporsional** — untuk Kecil menyatu jadi satu *self-declaration* (sejalan SS Pernyataan Mandiri), tetap akuntabel tanpa birokrasi.
+- **9.5 Implikasi aplikasi.**
+
+**Di Tracker LKPM** — properti baru **Mode Operasi** (Pendamping UMK / Hibrida / Penuh) sudah aktif dan terisi pada keempat baris contoh: Kecil → Pendamping UMK, Menengah → Hibrida, Besar → Penuh.
+
+Inti jawabannya: untuk perusahaan kecil yang sumber dayanya terbatas, aplikasi tidak menuntut struktur tim — ia berubah menjadi **pendamping** yang mengerjakan hampir seluruh proses, sementara satu orang dengan peran rangkap cukup menjawab pertanyaan terpandu dan menyatakan kebenaran data sekali. Sebaliknya, perusahaan besar tetap memakai alur penuh dengan pemisahan tugas dan gate berlapis.

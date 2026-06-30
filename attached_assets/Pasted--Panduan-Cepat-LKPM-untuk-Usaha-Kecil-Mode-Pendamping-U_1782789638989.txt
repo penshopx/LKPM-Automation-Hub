@@ -1,0 +1,51 @@
+# Panduan Cepat LKPM untuk Usaha Kecil (Mode Pendamping UMK)
+
+<aside>
+🤝
+
+Panduan ini untuk pemilik usaha kecil yang menjalankan usahanya sendiri — bahkan bila hanya 1–2 orang. Anda tidak perlu jadi ahli OSS. Cukup jawab beberapa pertanyaan, selebihnya dikerjakan sistem.
+
+</aside>
+
+## Apa itu LKPM & kapan wajib lapor?
+
+- **LKPM** = Laporan Kegiatan Penanaman Modal — laporan wajib ke pemerintah melalui OSS.
+- Usaha **Kecil** melapor **2× setahun (semesteran)**:
+    - Semester I (Jan–Jun) → paling lambat **10 Juli**
+    - Semester II (Jul–Des) → paling lambat **10 Januari**
+- Telat atau tidak lapor bisa kena sanksi bertahap (peringatan → pembatasan → pencabutan izin). Maka jangan sampai terlewat.
+
+## 5 Langkah Mudah
+
+1. **Siapkan catatan sederhana** — tidak perlu laporan keuangan formal. Cukup buku kas, nota/faktur, bukti BPJS (bila ada), dan jumlah pekerja. Boleh difoto.
+2. **Jawab pertanyaan pemandu** — sistem bertanya dengan bahasa sehari-hari (lihat daftar di bawah).
+3. **Biarkan sistem menyusun** — agen menghitung realisasi, mengisi kolom OSS, dan menyiapkan draf.
+4. **Periksa & nyatakan benar** — Anda cukup membaca ringkasan lalu menekan “Saya menyatakan data ini benar”. Inilah satu-satunya gerbang yang perlu Anda lakukan.
+5. **Kirim & simpan bukti** — sistem mengirim ke OSS dan menyimpan tanda terima untuk Anda.
+
+## Pertanyaan yang akan diajukan (siapkan jawabannya)
+
+- Berapa total uang yang sudah dikeluarkan untuk usaha sampai periode ini? (alat, tempat, modal kerja)
+- Berapa jumlah orang yang bekerja? (termasuk Anda & keluarga yang ikut bekerja)
+- Berapa kira-kira hasil penjualan/omzet periode ini?
+- Apakah ada iuran BPJS Ketenagakerjaan/Kesehatan?
+- Apa kendala yang dihadapi? (mis. modal, bahan baku, pemasaran)
+
+## Peran rangkap? Tidak masalah
+
+Kalau Anda sekaligus pemilik, direktur, dan pelaksana — atau usaha dijalankan berdua suami-istri — sistem tetap berjalan. **Tidak ada keharusan punya staf khusus.** Satu orang cukup untuk menyiapkan sekaligus menyatakan kebenaran data.
+
+## Yang dikerjakan sistem untuk Anda
+
+- Mengingatkan jauh hari sebelum 10 Juli / 10 Januari (dan tetap mengingatkan bila terlewat).
+- Menghitung & merapikan angka realisasi.
+- Mengisi formulir OSS sesuai data Anda.
+- Menyimpan bukti tanda terima.
+- Menandai bagian yang masih perlu diperjelas — **tanpa mengarang angka**.
+
+<aside>
+🛡️
+
+**Janji penting:** sistem tidak akan pernah mengarang angka. Bila sebuah data belum jelas sumbernya, sistem akan bertanya lebih dulu kepada Anda — bukan menebak.
+
+</aside>

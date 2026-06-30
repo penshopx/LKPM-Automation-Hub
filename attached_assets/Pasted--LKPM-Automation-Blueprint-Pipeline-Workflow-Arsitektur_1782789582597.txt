@@ -1,0 +1,295 @@
+# LKPM Automation Blueprint — Pipeline, Workflow & Arsitektur Agen (MultiClaw-OpenClaw)
+
+<callout icon="🏛️">**Peran:** Pakar Perizinan Usaha (OSS · KBLI · SS/Sertifikat Standar · NIB) + Orchestrator Agentic AI **MultiClaw-OpenClaw**.
+
+</callout>
+
+**Tujuan dokumen:** Menyediakan *pipeline-framework*, *workflow* end-to-end, dan *arsitektur Agen Spesialis & Sub-Spesialis* untuk penyusunan serta pelaporan **LKPM (Laporan Kegiatan Penanaman Modal)** bagi setiap perusahaan yang memiliki **Id Izin / NIB**.</callout>
+
+## 1. Ringkasan Eksekutif
+
+LKPM adalah kewajiban pelaporan periodik bagi penanam modal yang memiliki Id Izin/NIB, disampaikan **daring melalui OSS**. Blueprint ini mengubah proses manual yang rawan telat & tidak konsisten menjadi **lini produksi (pipeline)** yang dijalankan oleh sekumpulan agen AI terspesialisasi: satu **Agen Induk (Orchestrator)** yang mengoordinasikan **6 Agen Spesialis**, masing-masing membawahi **Sub-Spesialis** dengan tugas atomik yang dapat diaudit.
+
+> Prinsip desain: *single source of truth*, *deadline-driven*, *validasi berlapis*, *audit trail penuh*, dan *zero-missed-deadline*.
+> 
+
+## 2. Dasar Hukum & Kewajiban
+
+- **UU No. 25 Tahun 2007 (Pasal 15)** — setiap penanam modal wajib membuat laporan kegiatan penanaman modal dan menyampaikannya kepada BKPM/Kementerian Investasi.
+- **Peraturan BKPM No. 5 Tahun 2021 (Pasal 32)** — pedoman & tata cara pengawasan perizinan berusaha berbasis risiko, termasuk jadwal & kriteria kewajiban lapor.
+- **Kanal resmi:** Sistem **OSS (Online Single Submission)**.
+
+## 3. Matriks Kewajiban Berdasarkan Skala Usaha
+
+| Skala Usaha | Modal Usaha | Frekuensi Lapor | Wajib LKPM? |
+| --- | --- | --- | --- |
+| Mikro | < Rp 1 miliar | — | ❌ Dikecualikan |
+| Kecil | Rp 1 M – Rp 5 M | Semesteran (6 bln) | ✅ Ya |
+| Menengah | Rp 5 M – Rp 10 M | Triwulanan (3 bln) | ✅ Ya |
+| Besar | > Rp 10 miliar | Triwulanan (3 bln) | ✅ Ya |
+| Sektor khusus (hulu migas, perbankan, asuransi) | — | — | ❌ Dikecualikan |
+
+## 4. Kalender Pelaporan (Deadline)
+
+<aside>
+📅
+
+**Usaha Menengah & Besar — Triwulanan**
+
+</aside>
+
+| Periode | Cakupan | Batas Akhir |
+| --- | --- | --- |
+| Triwulan I | Jan–Mar | **10 April** |
+| Triwulan II | Apr–Jun | **10 Juli** |
+| Triwulan III | Jul–Sep | **10 Oktober** |
+| Triwulan IV | Okt–Des | **10 Januari** (tahun berikutnya) |
+
+<aside>
+📅
+
+**Usaha Kecil — Semesteran**: Semester I (Jan–Jun) & Semester II (Jul–Des).
+
+</aside>
+
+## 5. Komponen Data yang Dilaporkan
+
+1. **Realisasi Investasi** — modal tetap (tanah, bangunan, mesin/peralatan) + modal kerja.
+2. **Penyerapan Tenaga Kerja** — jumlah TKI & TKA.
+3. **Produksi Barang/Jasa** — nilai produksi / omzet.
+4. **Kewajiban Perusahaan** — CSR, kemitraan, BPJS (Ketenagakerjaan & Kesehatan).
+5. **Kendala Usaha** — permasalahan yang dihadapi dalam pelaksanaan proyek.
+
+## 6. Sanksi Administratif (Risiko Kepatuhan)
+
+`Peringatan tertulis → Pembatasan kegiatan usaha → Pembekuan kegiatan usaha → Pencabutan perizinan berusaha`
+
+---
+
+## 7. Pipeline-Framework (End-to-End)
+
+Delapan tahap lini produksi, setiap tahap punya *owner* (agen) dan *gate* validasi sebelum lanjut.
+
+```
+[1] INTAKE        → Identifikasi Id Izin/NIB, skala usaha, KBLI, periode jatuh tempo
+      │
+[2] COLLECT       → Tarik data realisasi: investasi, tenaga kerja, produksi, kewajiban
+      │
+[3] VALIDATE      → Rekonsiliasi, cek konsistensi, deteksi anomali & data hilang
+      │
+[4] DRAFT         → Petakan data ke field OSS + narasi kendala/tindak lanjut
+      │
+[5] REVIEW        → QA kepatuhan + persetujuan internal (maker-checker)
+      │
+[6] SUBMIT        → Input & kirim via OSS, simpan tanda terima
+      │
+[7] MONITOR       → Pantau status, tanggapi klarifikasi BKPM
+      │
+[8] ARCHIVE       → Arsip dokumen + audit trail + reminder periode berikutnya
+```
+
+### Gate / Quality Checkpoint per tahap
+
+| Gate | Syarat lolos |
+| --- | --- |
+| G1 (setelah Intake) | Skala usaha & periode terkonfirmasi, kewajiban lapor valid |
+| G2 (setelah Collect) | Seluruh 5 komponen data lengkap & bersumber |
+| G3 (setelah Validate) | 0 anomali kritis, angka rekonsiliasi balance |
+| G4 (setelah Review) | Disetujui checker/penanggung jawab |
+| G5 (setelah Submit) | Tanda terima OSS tersimpan |
+
+---
+
+## 8. Arsitektur Agen MultiClaw-OpenClaw
+
+<callout icon="🧭">**Agen Induk / Orchestrator — `LKPM-COMMANDER`**
+
+</callout>
+
+Mengoordinasikan seluruh spesialis, menjaga deadline, melakukan routing tugas, menggabungkan output, dan menegakkan gate. Tidak mengeksekusi tugas atomik — ia *mendelegasikan*.</callout>
+
+### Peta Hierarki
+
+```
+LKPM-COMMANDER (Orchestrator)
+├── S1 · Agen Spesialis Kepatuhan & Regulasi
+│     ├── S1.1 Sub-Agen Pemantau Regulasi (UU/Perban update)
+│     ├── S1.2 Sub-Agen Klasifikasi Skala & KBLI
+│     └── S1.3 Sub-Agen Kalender & Deadline
+├── S2 · Agen Spesialis Pengumpulan Data
+│     ├── S2.1 Sub-Agen Realisasi Investasi (modal tetap & kerja)
+│     ├── S2.2 Sub-Agen Ketenagakerjaan (TKI/TKA & BPJS)
+│     ├── S2.3 Sub-Agen Produksi & Omzet
+│     └── S2.4 Sub-Agen Kewajiban (CSR, kemitraan)
+├── S3 · Agen Spesialis Validasi & Rekonsiliasi
+│     ├── S3.1 Sub-Agen Rekonsiliasi Keuangan
+│     ├── S3.2 Sub-Agen Konsistensi & Deteksi Anomali
+│     └── S3.3 Sub-Agen Cross-check NIB/Proyek
+├── S4 · Agen Spesialis Penyusunan Dokumen
+│     ├── S4.1 Sub-Agen Mapping Field OSS
+│     ├── S4.2 Sub-Agen Narasi Kendala & Tindak Lanjut
+│     └── S4.3 Sub-Agen Lampiran & Bukti Pendukung
+├── S5 · Agen Spesialis Submission OSS
+│     ├── S5.1 Sub-Agen Entry & Kirim OSS
+│     ├── S5.2 Sub-Agen Tanda Terima & Bukti
+│     └── S5.3 Sub-Agen Klarifikasi/Respon BKPM
+└── S6 · Agen Spesialis Monitoring & Risiko
+      ├── S6.1 Sub-Agen Early-Warning Deadline
+      ├── S6.2 Sub-Agen Tracking Sanksi & Remediasi
+      └── S6.3 Sub-Agen Arsip & Audit Trail
+```
+
+### Kontrak I/O & Tanggung Jawab Tiap Agen
+
+<details><summary>S1 · Agen Spesialis Kepatuhan & Regulasi</summary>
+
+</details>
+
+**Misi:** Memastikan dasar hukum, klasifikasi, dan jadwal selalu benar & mutakhir.
+
+| Sub-Agen | Input | Proses | Output |
+| --- | --- | --- | --- |
+| S1.1 Pemantau Regulasi | UU 25/2007, Perban 5/2021, sumber resmi | Pantau perubahan regulasi & ambang | Catatan perubahan + dampak |
+| S1.2 Klasifikasi Skala & KBLI | Nilai modal, NIB, KBLI | Tentukan skala (Kecil/Menengah/Besar) & status wajib lapor | Profil kewajiban perusahaan |
+| S1.3 Kalender & Deadline | Skala usaha, tahun berjalan | Hitung periode & batas akhir | Jadwal lapor + tanggal pengingat |
+
+</details>
+
+<details><summary>S2 · Agen Spesialis Pengumpulan Data</summary>
+
+</details>
+
+**Misi:** Mengumpulkan 5 komponen data realisasi secara lengkap & bersumber.
+
+| Sub-Agen | Input | Proses | Output |
+| --- | --- | --- | --- |
+| S2.1 Realisasi Investasi | GL/keuangan, aset tetap | Pisahkan modal tetap vs modal kerja | Tabel realisasi investasi |
+| S2.2 Ketenagakerjaan | HRIS, data BPJS | Hitung TKI/TKA & kepesertaan BPJS | Data tenaga kerja |
+| S2.3 Produksi & Omzet | Data penjualan/produksi | Agregasi nilai produksi/omzet | Nilai produksi periode |
+| S2.4 Kewajiban | Catatan CSR, kemitraan | Rekap pelaksanaan kewajiban | Status CSR/kemitraan/BPJS |
+
+</details>
+
+<details><summary>S3 · Agen Spesialis Validasi & Rekonsiliasi</summary>
+
+</details>
+
+**Misi:** Menjamin data akurat, konsisten, dan bebas anomali sebelum drafting.
+
+| Sub-Agen | Input | Proses | Output |
+| --- | --- | --- | --- |
+| S3.1 Rekonsiliasi Keuangan | Output S2.1 & S2.3 | Cocokkan angka antar sumber | Laporan rekonsiliasi |
+| S3.2 Konsistensi & Anomali | Seluruh data S2 | Cek logika, outlier, data hilang | Daftar temuan + flag |
+| S3.3 Cross-check NIB/Proyek | NIB, daftar proyek/KBLI | Pastikan pelaporan per proyek benar | Konfirmasi kesesuaian |
+
+</details>
+
+<details><summary>S4 · Agen Spesialis Penyusunan Dokumen</summary>
+
+</details>
+
+**Misi:** Menyusun draf LKPM siap-input sesuai struktur OSS.
+
+| Sub-Agen | Input | Proses | Output |
+| --- | --- | --- | --- |
+| S4.1 Mapping Field OSS | Data tervalidasi | Petakan ke field formulir OSS | Draf terstruktur OSS |
+| S4.2 Narasi Kendala | Temuan operasional | Susun narasi kendala & tindak lanjut | Bagian kendala usaha |
+| S4.3 Lampiran & Bukti | Dokumen pendukung | Kumpulkan & beri label bukti | Paket lampiran |
+
+</details>
+
+<details><summary>S5 · Agen Spesialis Submission OSS</summary>
+
+</details>
+
+**Misi:** Mengirim laporan ke OSS dan mengamankan bukti.
+
+| Sub-Agen | Input | Proses | Output |
+| --- | --- | --- | --- |
+| S5.1 Entry & Kirim OSS | Draf disetujui | Input ke OSS & submit | Status terkirim |
+| S5.2 Tanda Terima | Respon OSS | Simpan bukti/tanda terima | Arsip tanda terima |
+| S5.3 Klarifikasi BKPM | Notifikasi BKPM | Siapkan & kirim tanggapan | Klarifikasi terjawab |
+
+</details>
+
+<details><summary>S6 · Agen Spesialis Monitoring & Risiko</summary>
+
+</details>
+
+**Misi:** Mencegah keterlambatan & memitigasi risiko sanksi.
+
+| Sub-Agen | Input | Proses | Output |
+| --- | --- | --- | --- |
+| S6.1 Early-Warning | Kalender (S1.3) | Pengingat H-30/H-14/H-7/H-3/H-1 | Notifikasi deadline |
+| S6.2 Tracking Sanksi | Status kepatuhan | Pantau risiko & rencana remediasi | Status risiko + aksi |
+| S6.3 Arsip & Audit Trail | Semua output | Simpan & versinikan dokumen | Arsip + jejak audit |
+
+</details>
+
+---
+
+## 9. Workflow Operasional (Alur Kerja)
+
+1. **Trigger** — S6.1 mengeluarkan early-warning saat mendekati periode → COMMANDER membuka siklus.
+2. **Setup** — S1.2 konfirmasi skala & status wajib; S1.3 kunci deadline.
+3. **Akuisisi** — COMMANDER memerintah S2.1–S2.4 mengumpulkan data secara paralel.
+4. **Validasi** — S3 menjalankan rekonsiliasi & anomali; jika gagal Gate G3 → balik ke S2.
+5. **Drafting** — S4 menyusun draf + lampiran sesuai field OSS.
+6. **Review (maker-checker)** — QA kepatuhan; penanggung jawab menyetujui (Gate G4).
+7. **Submission** — S5 input ke OSS, simpan tanda terima (Gate G5).
+8. **Monitoring & Arsip** — S6 pantau klarifikasi, arsipkan, set pengingat periode berikutnya.
+
+## 10. RACI (Ringkas)
+
+| Aktivitas | Responsible | Accountable | Consulted | Informed |
+| --- | --- | --- | --- | --- |
+| Klasifikasi & jadwal | S1 | COMMANDER | — | Manajemen |
+| Pengumpulan data | S2 | COMMANDER | Keuangan/HR | S3 |
+| Validasi | S3 | COMMANDER | S2 | S4 |
+| Penyusunan draf | S4 | COMMANDER | S1, S3 | Reviewer |
+| Persetujuan | Penanggung jawab | Direksi | S4 | S5 |
+| Submission OSS | S5 | COMMANDER | — | Manajemen |
+| Monitoring & arsip | S6 | COMMANDER | S5 | Semua |
+
+## 11. SOP Checklist Sebelum Submit
+
+- [ ]  Skala usaha & status wajib lapor terkonfirmasi (S1.2)
+- [ ]  Periode & batas akhir terkunci (S1.3)
+- [ ]  Realisasi investasi (modal tetap + kerja) lengkap (S2.1)
+- [ ]  Data TKI/TKA & BPJS lengkap (S2.2)
+- [ ]  Nilai produksi/omzet terisi (S2.3)
+- [ ]  CSR, kemitraan, BPJS terdokumentasi (S2.4)
+- [ ]  Rekonsiliasi balance & 0 anomali kritis (S3)
+- [ ]  Narasi kendala & tindak lanjut tersusun (S4.2)
+- [ ]  Lampiran/bukti lengkap (S4.3)
+- [ ]  Disetujui checker/penanggung jawab (Gate G4)
+- [ ]  Tanda terima OSS tersimpan (S5.2)
+
+## 12. KPI & Metrik Keberhasilan
+
+| KPI | Target |
+| --- | --- |
+| Ketepatan waktu lapor | 100% (zero missed deadline) |
+| Kelengkapan data sebelum drafting | ≥ 99% |
+| Anomali kritis lolos ke OSS | 0 |
+| Lead time siklus (Intake→Submit) | ≤ 5 hari kerja |
+| Klarifikasi BKPM terjawab tepat waktu | 100% |
+
+<aside>
+⚠️
+
+**Catatan kepatuhan:** Detail teknis field OSS, ambang nilai, dan tenggat dapat berubah mengikuti kebijakan terbaru Kementerian Investasi/BKPM. Sub-Agen S1.1 (Pemantau Regulasi) wajib memverifikasi ke sumber resmi OSS sebelum setiap siklus pelaporan.
+
+</aside>
+
+Tracker LKPM — Pelaporan per Periode
+
+Penerapan Trilogi Gustafta pada Penyusunan LKPM
+
+Panduan Cepat LKPM untuk Usaha Kecil (Mode Pendamping UMK)
+
+Panduan LKPM untuk Usaha Besar (Mode Penuh / Human-in-loop)
+
+Panduan LKPM untuk Usaha Menengah (Mode Hibrida)
+
+Paket Instruksi Agen — LKPM-COMMANDER (siap salin)

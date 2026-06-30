@@ -1,0 +1,23 @@
+Lanjut. Karena agen otomatis masih terblokir dan saya belum punya data perusahaan riil Anda, langkah paling bernilai berikutnya adalah membuat **Panduan Pengisian Field OSS LKPM** — peta rinci setiap komponen data ke kolom formulir LKPM di OSS, agar PIC tahu persis apa yang harus diisi (ini realisasi tugas S4.1 Mapping Field OSS). Saya grounding dulu dengan sumber resmi terkini agar akurat.
+
+Grounding selesai dari panduan resmi OSS dan materi BKPM/DPMPTSP. Sekarang saya buat halaman panduan pengisian field OSS LKPM.
+
+Panduan pengisian field OSS LKPM sudah jadi — memetakan tiap kolom Tracker ke field formulir OSS, plus klasifikasi modal tetap vs modal kerja dan jebakan-jebakan umum yang sering bikin laporan ditolak. Materi ini saya dasarkan pada panduan resmi OSS dan materi Bimtek BKPM/DPMPTSP, termasuk aturan nilai perolehan tanpa penyusutan,[[1]](https://dpmptsp.bojonegorokab.go.id/berita/baca/143) pembedaan dua tahap (Konstruksi vs Produksi),[[2]](https://oss.go.id/id/panduan/635970086345c7d71a8144b2) field modal/tenaga kerja/permasalahan,[[3]](https://disppkukm.jakarta.go.id/storage/dokumen_bidang/1739934456_Tata%20Cara%20Penyampaian%20LKPM.pdf) dan koreksi via tombol Perubahan Total Akumulasi.[[4]](https://litaparomitasiregar.id/wp-content/uploads/2025/09/PAPARAN-BIMTEK-LKPM-2-Copy.pdf)
+
+Sistem LKPM kini punya satu lagi aset operasional kunci. Status keseluruhan:
+
+| Komponen | Status |
+| --- | --- |
+| 🎛️ Pusat Komando (beranda) | ✅ |
+| 🧾 Panduan Field OSS (peta data → formulir) | ✅ Baru |
+| 📑 Blueprint · 🗂️ Tracker + 11 view · 📚 Metodologi | ✅ |
+| 🤝📘🏢 Panduan per skala + 3 template intake · 🧭 Paket Instruksi | ✅ |
+| 🤖 Agen LKPM-COMMANDER | ⛔ Backend masih galat |
+
+Yang masih bisa saya kerjakan tanpa bergantung pada agen yang terblokir:
+
+1. **Glosarium & FAQ LKPM** — istilah OSS/KBLI/RBA + tanya-jawab praktis (terlambat, koreksi, isian nol).
+2. **Lembar checklist cetak per periode** — versi ringkas siap-print untuk PIC lapangan.
+3. **Tautkan halaman baru ke Pusat Komando** — tambahkan "Panduan Field OSS" ke navigasi cepat agar mudah ditemukan.
+
+Mau saya **lanjut** ke salah satu (saran saya: #3 dulu agar halaman baru terhubung, lalu #1), atau ada arah lain yang Anda inginkan?

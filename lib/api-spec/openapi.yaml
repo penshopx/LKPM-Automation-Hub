@@ -1,0 +1,1983 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: LKPM-Flow API — companies, reports, data points, constraints, audit trail, and dashboards for LKPM (Laporan Kegiatan Penanaman Modal) reporting to OSS.
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: companies
+    description: Penanam modal (companies) with NIB and business scale
+  - name: reports
+    description: LKPM reports per company and reporting period
+  - name: dataPoints
+    description: Living-document data points with source, status, and confidence
+  - name: constraints
+    description: Business constraints (kendala) and follow-up narratives
+  - name: activities
+    description: Audit trail entries for reports
+  - name: dashboard
+    description: Aggregated dashboards and compliance views
+  - name: anthropic
+    description: Asisten AI (penyusun draf laporan dan mentor LKPM dialog Socrates)
+  - name: billing
+    description: Langganan Stripe dan kredit pendampingan AI
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /companies:
+    get:
+      operationId: listCompanies
+      tags: [companies]
+      summary: List companies
+      parameters:
+        - name: scale
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/BusinessScale"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of companies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Company"
+    post:
+      operationId: createCompany
+      tags: [companies]
+      summary: Create a company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+  /companies/{id}:
+    get:
+      operationId: getCompany
+      tags: [companies]
+      summary: Get a company
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Company
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      operationId: updateCompany
+      tags: [companies]
+      summary: Update a company
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteCompany
+      tags: [companies]
+      summary: Delete a company
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /companies/{companyId}/izin:
+    get:
+      operationId: listIzin
+      tags: [izin]
+      summary: List izin for a company
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of izin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Izin"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createIzin
+      tags: [izin]
+      summary: Create an izin under a company
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IzinInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Izin"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /izin/{id}:
+    get:
+      operationId: getIzin
+      tags: [izin]
+      summary: Get an izin with its reports
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Izin detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IzinDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      operationId: updateIzin
+      tags: [izin]
+      summary: Update an izin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IzinUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Izin"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteIzin
+      tags: [izin]
+      summary: Delete an izin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reports:
+    get:
+      operationId: listReports
+      tags: [reports]
+      summary: List reports
+      parameters:
+        - name: companyId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: izinId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/ReportStatus"
+        - name: scale
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/BusinessScale"
+      responses:
+        "200":
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+    post:
+      operationId: createReport
+      tags: [reports]
+      summary: Create a report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+  /reports/{id}:
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Get a report with full detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Report detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      operationId: updateReport
+      tags: [reports]
+      summary: Update a report (status, narrative, gates)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteReport
+      tags: [reports]
+      summary: Delete a report
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reports/{reportId}/data-points:
+    get:
+      operationId: listDataPoints
+      tags: [dataPoints]
+      summary: List data points for a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Data points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataPoint"
+    post:
+      operationId: createDataPoint
+      tags: [dataPoints]
+      summary: Add a data point to a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataPointInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataPoint"
+  /data-points/{id}:
+    patch:
+      operationId: updateDataPoint
+      tags: [dataPoints]
+      summary: Update a data point
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataPointUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataPoint"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteDataPoint
+      tags: [dataPoints]
+      summary: Delete a data point
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reports/{reportId}/constraints:
+    get:
+      operationId: listConstraints
+      tags: [constraints]
+      summary: List constraints for a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Constraints
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Constraint"
+    post:
+      operationId: createConstraint
+      tags: [constraints]
+      summary: Add a constraint to a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConstraintInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Constraint"
+  /constraints/{id}:
+    patch:
+      operationId: updateConstraint
+      tags: [constraints]
+      summary: Update a constraint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConstraintUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Constraint"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteConstraint
+      tags: [constraints]
+      summary: Delete a constraint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reports/{reportId}/activities:
+    get:
+      operationId: listActivities
+      tags: [activities]
+      summary: List audit trail entries for a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Activity"
+    post:
+      operationId: createActivity
+      tags: [activities]
+      summary: Add an audit trail entry
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActivityInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Activity"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Compliance and pipeline summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /dashboard/calendar:
+    get:
+      operationId: getReportingCalendar
+      tags: [dashboard]
+      summary: Upcoming reporting deadlines
+      responses:
+        "200":
+          description: Calendar entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CalendarEntry"
+  /dashboard/data-quality:
+    get:
+      operationId: getDataQuality
+      tags: [dashboard]
+      summary: Anti-hallucination data quality control view
+      responses:
+        "200":
+          description: Data quality control
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataQuality"
+  /assistant/report-draft:
+    post:
+      operationId: generateReportDraft
+      tags: [anthropic]
+      summary: Susun draf narasi LKPM dari data laporan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDraftInput"
+      responses:
+        "200":
+          description: Draf narasi laporan yang dihasilkan AI
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDraft"
+        "404":
+          description: Laporan tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /assistant/orchestrate:
+    post:
+      operationId: orchestrateReportDraft
+      tags: [anthropic]
+      summary: Susun draf LKPM secara agentik (orkestrator + 5 agen, SSE stream)
+      description: >-
+        Menjalankan pipeline agentik (Pengumpul Data, Validator Anti-Halusinasi,
+        Pemeriksa Kepatuhan OSS, Penyusun Narasi, Pemantau Tenggat & Risiko) dan
+        mengalirkan kemajuan tiap agen sebagai SSE. Event berupa JSON pada baris
+        `data:` dengan bentuk agent_start, agent_done, final, error, dan done.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrchestrateReportDraftInput"
+      responses:
+        "200":
+          description: Aliran SSE kemajuan tiap agen dan hasil akhir
+          content:
+            text/event-stream: {}
+        "404":
+          description: Laporan tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /anthropic/conversations:
+    get:
+      operationId: listAnthropicConversations
+      tags: [anthropic]
+      summary: Daftar percakapan mentor
+      responses:
+        "200":
+          description: Daftar percakapan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnthropicConversation"
+    post:
+      operationId: createAnthropicConversation
+      tags: [anthropic]
+      summary: Buat percakapan mentor baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnthropicConversationInput"
+      responses:
+        "201":
+          description: Percakapan dibuat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnthropicConversation"
+  /anthropic/conversations/{id}:
+    get:
+      operationId: getAnthropicConversation
+      tags: [anthropic]
+      summary: Ambil percakapan beserta pesan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Percakapan beserta pesan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnthropicConversationWithMessages"
+        "404":
+          description: Tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteAnthropicConversation
+      tags: [anthropic]
+      summary: Hapus percakapan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Terhapus
+        "404":
+          description: Tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /anthropic/conversations/{id}/messages:
+    post:
+      operationId: sendAnthropicMessage
+      tags: [anthropic]
+      summary: Kirim pesan ke mentor dan terima jawaban (SSE stream)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnthropicMessageInput"
+      responses:
+        "200":
+          description: Aliran SSE potongan jawaban asisten
+          content:
+            text/event-stream: {}
+  /assistant/helpdesk:
+    post:
+      operationId: helpdeskChat
+      tags: [anthropic]
+      summary: Tanya jawab helpdesk LKPM-Flow (LKPM, OSS, NIB, KBLI) via SSE
+      description: >-
+        Asisten helpdesk tanpa status yang menjawab pertanyaan seputar cara
+        memakai aplikasi LKPM-Flow serta pengetahuan LKPM, OSS, NIB, dan KBLI.
+        Riwayat percakapan dikirim dari klien; jawaban dialirkan sebagai SSE
+        pada baris `data:` berupa JSON {content} per potongan dan {done:true} di
+        akhir.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HelpdeskInput"
+      responses:
+        "200":
+          description: Aliran SSE potongan jawaban helpdesk
+          content:
+            text/event-stream: {}
+  /me:
+    get:
+      operationId: getCurrentUser
+      tags: [users]
+      summary: Profil pengguna saat ini (peran akun)
+      description: >-
+        Mengembalikan peran akun pengguna yang sedang masuk. `role` bernilai
+        null bila pengguna belum memilih peran (perlu onboarding).
+      responses:
+        "200":
+          description: Profil pengguna
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUser"
+  /me/role:
+    post:
+      operationId: setCurrentUserRole
+      tags: [users]
+      summary: Tetapkan peran akun (sekali saat onboarding)
+      description: >-
+        Menetapkan peran akun pengguna. Hanya bisa ditetapkan bila peran belum
+        ada; bila sudah ada, peran yang tersimpan tetap dikembalikan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetRoleInput"
+      responses:
+        "200":
+          description: Profil pengguna setelah peran ditetapkan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUser"
+  /billing/summary:
+    get:
+      operationId: getBillingSummary
+      tags: [billing]
+      summary: Ringkasan langganan dan kredit pendampingan AI
+      description: >-
+        Mengembalikan paket aktif, batas perusahaan, dan saldo kredit
+        pendampingan AI (jatah bulanan + saldo beli) milik konsultan saat ini.
+      responses:
+        "200":
+          description: Ringkasan penagihan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BillingSummary"
+  /billing/plans:
+    get:
+      operationId: listBillingPlans
+      tags: [billing]
+      summary: Daftar paket langganan dan paket kredit yang tersedia
+      responses:
+        "200":
+          description: Daftar paket
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BillingPlan"
+  /billing/checkout:
+    post:
+      operationId: createBillingCheckout
+      tags: [billing]
+      summary: Mulai sesi checkout Stripe (langganan atau beli kredit)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BillingCheckoutInput"
+      responses:
+        "200":
+          description: URL checkout Stripe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BillingCheckoutResult"
+        "409":
+          description: Peran akun belum ditetapkan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "502":
+          description: Layanan Stripe belum terhubung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /billing/portal:
+    post:
+      operationId: createBillingPortal
+      tags: [billing]
+      summary: Buka portal pelanggan Stripe untuk kelola langganan
+      responses:
+        "200":
+          description: URL portal pelanggan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BillingPortalResult"
+        "404":
+          description: Belum ada pelanggan Stripe untuk konsultan ini
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "502":
+          description: Layanan Stripe belum terhubung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /billing/credits/claim:
+    post:
+      operationId: claimBillingCredits
+      tags: [billing]
+      summary: Klaim kredit dari sesi checkout yang sudah dibayar
+      description: >-
+        Memvalidasi sesi checkout ke Stripe lalu menambahkan kredit ke saldo
+        beli konsultan. Idempoten — sesi yang sama tidak akan dihitung dua kali.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaimCreditsInput"
+      responses:
+        "200":
+          description: Hasil klaim kredit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimCreditsResult"
+        "502":
+          description: Layanan Stripe belum terhubung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    BillingSummary:
+      type: object
+      properties:
+        role:
+          type: string
+          nullable: true
+          enum: [konsultan, perusahaan, null]
+        plan:
+          type: object
+          properties:
+            tier:
+              type: string
+            name:
+              type: string
+            status:
+              type: string
+              enum: [active, none]
+          required: [tier, name, status]
+        credits:
+          type: object
+          properties:
+            allowanceTotal:
+              type: integer
+            allowanceRemaining:
+              type: integer
+            topupBalance:
+              type: integer
+            available:
+              type: integer
+          required: [allowanceTotal, allowanceRemaining, topupBalance, available]
+        limits:
+          type: object
+          properties:
+            maxCompanies:
+              type: integer
+              nullable: true
+              description: Batas jumlah perusahaan; null berarti tanpa batas
+            companyCount:
+              type: integer
+          required: [maxCompanies, companyCount]
+      required: [role, plan, credits, limits]
+    BillingPlanPrice:
+      type: object
+      properties:
+        priceId:
+          type: string
+        unitAmount:
+          type: integer
+          nullable: true
+        currency:
+          type: string
+        interval:
+          type: string
+          nullable: true
+          enum: [month, year, null]
+      required: [priceId, unitAmount, currency, interval]
+    BillingPlan:
+      type: object
+      properties:
+        productId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        kind:
+          type: string
+          enum: [subscription, credit]
+        tier:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+        maxCompanies:
+          type: integer
+          nullable: true
+        monthlyCredits:
+          type: integer
+          nullable: true
+        credits:
+          type: integer
+          nullable: true
+        prices:
+          type: array
+          items:
+            $ref: "#/components/schemas/BillingPlanPrice"
+      required:
+        - productId
+        - name
+        - description
+        - kind
+        - tier
+        - role
+        - maxCompanies
+        - monthlyCredits
+        - credits
+        - prices
+    BillingCheckoutInput:
+      type: object
+      properties:
+        priceId:
+          type: string
+      required: [priceId]
+    BillingCheckoutResult:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+      required: [url]
+    BillingPortalResult:
+      type: object
+      properties:
+        url:
+          type: string
+      required: [url]
+    ClaimCreditsInput:
+      type: object
+      properties:
+        sessionId:
+          type: string
+      required: [sessionId]
+    ClaimCreditsResult:
+      type: object
+      properties:
+        granted:
+          type: integer
+        available:
+          type: integer
+      required: [granted, available]
+    CurrentUser:
+      type: object
+      properties:
+        role:
+          type: string
+          nullable: true
+          enum: [konsultan, perusahaan, null]
+          description: Peran akun; null bila belum onboarding
+      required:
+        - role
+    SetRoleInput:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [konsultan, perusahaan]
+      required:
+        - role
+    ReportDraftInput:
+      type: object
+      properties:
+        reportId:
+          type: integer
+        focus:
+          type: string
+          description: Penekanan opsional dari pengguna (mis. fokus realisasi investasi)
+      required:
+        - reportId
+    ReportDraft:
+      type: object
+      properties:
+        activityNarrative:
+          type: string
+          description: Draf narasi kegiatan penanaman modal untuk periode
+        constraintNarrative:
+          type: string
+          description: Draf narasi kendala dan rencana tindak lanjut
+        dataNotes:
+          type: string
+          description: Catatan kualitas data (sumber, verifikasi, confidence) yang perlu diperhatikan
+        disclaimer:
+          type: string
+      required:
+        - activityNarrative
+        - constraintNarrative
+        - dataNotes
+        - disclaimer
+    OrchestrateReportDraftInput:
+      type: object
+      properties:
+        reportId:
+          type: integer
+        focus:
+          type: string
+          description: Penekanan opsional dari pengguna (mis. fokus realisasi investasi)
+      required:
+        - reportId
+    AnthropicConversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - createdAt
+    AnthropicMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - role
+        - content
+        - createdAt
+    AnthropicConversationInput:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+    AnthropicMessageInput:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+    HelpdeskInput:
+      type: object
+      properties:
+        messages:
+          type: array
+          description: Riwayat percakapan helpdesk dari klien (urut terlama ke terbaru)
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [user, assistant]
+              content:
+                type: string
+            required:
+              - role
+              - content
+      required:
+        - messages
+    AnthropicConversationWithMessages:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnthropicMessage"
+      required:
+        - id
+        - title
+        - createdAt
+        - messages
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    BusinessScale:
+      type: string
+      enum: [mikro, kecil, menengah, besar]
+      description: Investment scale determining reporting frequency
+
+    OperatingMode:
+      type: string
+      enum: [pendamping, hibrida, penuh]
+      description: Working mode — UMK companion, hybrid, or full human-in-loop
+
+    PermitType:
+      type: string
+      enum: [nib, sertifikat_standar, izin]
+      description: Jenis perizinan berusaha — NIB saja, NIB + Sertifikat Standar, atau NIB + Izin
+
+    SsStatus:
+      type: string
+      enum: [tidak_ada, pernyataan_mandiri, perlu_verifikasi, terverifikasi]
+      description: Status Sertifikat Standar (RBA) — tidak ada, pernyataan mandiri (MR), perlu verifikasi (MT), atau terverifikasi
+
+    ReportStatus:
+      type: string
+      enum: [intake, collect, validate, draft, review, submit, monitor, archive]
+      description: Pipeline stage of the report
+
+    PeriodType:
+      type: string
+      enum: [triwulan, semester, tahunan]
+
+    DataCategory:
+      type: string
+      enum: [investasi, tenaga_kerja, produksi, kewajiban]
+      description: LKPM data component category
+
+    DataStatus:
+      type: string
+      enum: [terverifikasi, perlu_verifikasi, estimasi]
+      description: Verification status of a data point
+
+    Company:
+      type: object
+      required:
+        - id
+        - name
+        - nib
+        - scale
+        - operatingMode
+        - permitType
+        - ssStatus
+        - createdAt
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        nib:
+          type: string
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        operatingMode:
+          $ref: "#/components/schemas/OperatingMode"
+        permitType:
+          $ref: "#/components/schemas/PermitType"
+        ssStatus:
+          $ref: "#/components/schemas/SsStatus"
+        kbli:
+          type: array
+          items:
+            type: string
+        capital:
+          type: ["number", "null"]
+          description: Modal usaha in IDR
+        address:
+          type: ["string", "null"]
+        picName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+    CompanyInput:
+      type: object
+      required:
+        - name
+        - nib
+        - scale
+        - operatingMode
+        - permitType
+      properties:
+        name:
+          type: string
+          minLength: 1
+        nib:
+          type: string
+          minLength: 1
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        operatingMode:
+          $ref: "#/components/schemas/OperatingMode"
+        permitType:
+          $ref: "#/components/schemas/PermitType"
+        ssStatus:
+          $ref: "#/components/schemas/SsStatus"
+        kbli:
+          type: array
+          items:
+            type: string
+        capital:
+          type: number
+        address:
+          type: string
+        picName:
+          type: string
+    CompanyUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        nib:
+          type: string
+          minLength: 1
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        operatingMode:
+          $ref: "#/components/schemas/OperatingMode"
+        permitType:
+          $ref: "#/components/schemas/PermitType"
+        ssStatus:
+          $ref: "#/components/schemas/SsStatus"
+        kbli:
+          type: array
+          items:
+            type: string
+        capital:
+          type: number
+        address:
+          type: string
+        picName:
+          type: string
+
+    Report:
+      type: object
+      required:
+        - id
+        - izinId
+        - companyId
+        - companyName
+        - projectName
+        - scale
+        - operatingMode
+        - periodType
+        - periodLabel
+        - year
+        - deadline
+        - status
+        - idIzin
+        - createdAt
+      properties:
+        id:
+          type: integer
+        izinId:
+          type: integer
+        companyId:
+          type: integer
+        companyName:
+          type: string
+        projectName:
+          type: ["string", "null"]
+          description: Nama proyek dari Izin terkait
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        operatingMode:
+          $ref: "#/components/schemas/OperatingMode"
+        periodType:
+          $ref: "#/components/schemas/PeriodType"
+        periodLabel:
+          type: string
+          description: e.g. "TW II 2026" or "Semester I 2026"
+        year:
+          type: integer
+        deadline:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        idIzin:
+          type: string
+          description: Id Izin / NIB project identifier
+        narrative:
+          type: ["string", "null"]
+          description: Overall constraint narrative for the report
+        ossReceipt:
+          type: ["string", "null"]
+          description: OSS submission receipt reference
+        makerName:
+          type: ["string", "null"]
+        checkerName:
+          type: ["string", "null"]
+        approverName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+    ReportDetail:
+      type: object
+      required:
+        - report
+        - dataPoints
+        - constraints
+        - activities
+      properties:
+        report:
+          $ref: "#/components/schemas/Report"
+        dataPoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/DataPoint"
+        constraints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Constraint"
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+    ReportInput:
+      type: object
+      required:
+        - izinId
+        - periodType
+        - periodLabel
+        - year
+        - deadline
+      properties:
+        izinId:
+          type: integer
+        periodType:
+          $ref: "#/components/schemas/PeriodType"
+        periodLabel:
+          type: string
+          minLength: 1
+        year:
+          type: integer
+        deadline:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        narrative:
+          type: string
+        makerName:
+          type: string
+        checkerName:
+          type: string
+        approverName:
+          type: string
+    ReportUpdate:
+      type: object
+      properties:
+        periodType:
+          $ref: "#/components/schemas/PeriodType"
+        periodLabel:
+          type: string
+          minLength: 1
+        year:
+          type: integer
+        deadline:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        narrative:
+          type: string
+        ossReceipt:
+          type: string
+        makerName:
+          type: string
+        checkerName:
+          type: string
+        approverName:
+          type: string
+
+    Izin:
+      type: object
+      required:
+        - id
+        - companyId
+        - idIzin
+        - scale
+        - createdAt
+      properties:
+        id:
+          type: integer
+        companyId:
+          type: integer
+        idIzin:
+          type: string
+          description: Id Izin / nomor proyek pada OSS
+        kbli:
+          type: ["string", "null"]
+          description: Kode KBLI proyek Izin ini
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        projectName:
+          type: ["string", "null"]
+        projectLocation:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+    IzinInput:
+      type: object
+      required:
+        - idIzin
+        - scale
+      properties:
+        idIzin:
+          type: string
+          minLength: 1
+        kbli:
+          type: string
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        projectName:
+          type: string
+        projectLocation:
+          type: string
+    IzinUpdate:
+      type: object
+      properties:
+        idIzin:
+          type: string
+          minLength: 1
+        kbli:
+          type: string
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        projectName:
+          type: string
+        projectLocation:
+          type: string
+    IzinDetail:
+      type: object
+      required:
+        - izin
+        - reports
+      properties:
+        izin:
+          $ref: "#/components/schemas/Izin"
+        reports:
+          type: array
+          items:
+            $ref: "#/components/schemas/Report"
+
+    DataPoint:
+      type: object
+      required:
+        - id
+        - reportId
+        - category
+        - label
+        - status
+        - confidence
+        - createdAt
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: integer
+        category:
+          $ref: "#/components/schemas/DataCategory"
+        label:
+          type: string
+          description: e.g. "Realisasi modal tetap"
+        fieldKey:
+          type: ["string", "null"]
+          description: >-
+            Stable identifier binding this data point to an OSS catalog field
+            (e.g. "inv_mesin"). When present, it is authoritative for
+            catalog matching so label edits do not break the binding.
+        value:
+          type: ["number", "null"]
+          description: Numeric realization value
+        unit:
+          type: ["string", "null"]
+          description: e.g. "IDR", "orang"
+        source:
+          type: ["string", "null"]
+          description: Provenance citation, e.g. "GL-2026-Q2, baris 88"
+        status:
+          $ref: "#/components/schemas/DataStatus"
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+        attribution:
+          type: ["string", "null"]
+          description: Who/which agent produced this value
+        createdAt:
+          type: string
+          format: date-time
+    DataPointInput:
+      type: object
+      required:
+        - category
+        - label
+        - status
+        - confidence
+      properties:
+        category:
+          $ref: "#/components/schemas/DataCategory"
+        label:
+          type: string
+          minLength: 1
+        fieldKey:
+          type: string
+          description: Stable OSS catalog field identifier (e.g. "inv_mesin").
+        value:
+          type: number
+        unit:
+          type: string
+        source:
+          type: string
+        status:
+          $ref: "#/components/schemas/DataStatus"
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+        attribution:
+          type: string
+    DataPointUpdate:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/DataCategory"
+        label:
+          type: string
+          minLength: 1
+        fieldKey:
+          type: ["string", "null"]
+          description: Stable OSS catalog field identifier (e.g. "inv_mesin").
+        value:
+          type: number
+        unit:
+          type: string
+        source:
+          type: string
+        status:
+          $ref: "#/components/schemas/DataStatus"
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+        attribution:
+          type: string
+
+    Constraint:
+      type: object
+      required:
+        - id
+        - reportId
+        - issue
+        - createdAt
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: integer
+        issue:
+          type: string
+        followUp:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+    ConstraintInput:
+      type: object
+      required:
+        - issue
+      properties:
+        issue:
+          type: string
+          minLength: 1
+        followUp:
+          type: string
+    ConstraintUpdate:
+      type: object
+      properties:
+        issue:
+          type: string
+          minLength: 1
+        followUp:
+          type: string
+
+    Activity:
+      type: object
+      required:
+        - id
+        - reportId
+        - action
+        - actor
+        - createdAt
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: integer
+        action:
+          type: string
+          description: e.g. "Gate G3 lolos", "Data divalidasi"
+        actor:
+          type: string
+          description: Person or agent, e.g. "S3 · Validasi" or "Budi (Checker)"
+        detail:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+    ActivityInput:
+      type: object
+      required:
+        - action
+        - actor
+      properties:
+        action:
+          type: string
+          minLength: 1
+        actor:
+          type: string
+          minLength: 1
+        detail:
+          type: string
+
+    StatusCount:
+      type: object
+      required:
+        - status
+        - count
+      properties:
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        count:
+          type: integer
+    ScaleCount:
+      type: object
+      required:
+        - scale
+        - count
+      properties:
+        scale:
+          $ref: "#/components/schemas/BusinessScale"
+        count:
+          type: integer
+    DashboardSummary:
+      type: object
+      required:
+        - totalCompanies
+        - totalReports
+        - submittedReports
+        - overdueReports
+        - dueSoonReports
+        - unverifiedDataPoints
+        - totalInvestmentRealization
+        - verifiedDataPointPercent
+        - averageConfidence
+        - byStatus
+        - byScale
+      properties:
+        totalCompanies:
+          type: integer
+        totalReports:
+          type: integer
+        submittedReports:
+          type: integer
+        overdueReports:
+          type: integer
+        dueSoonReports:
+          type: integer
+          description: Reports due within 30 days and not yet submitted
+        unverifiedDataPoints:
+          type: integer
+        totalInvestmentRealization:
+          type: number
+          description: Sum of all investasi-category data point values (IDR)
+        verifiedDataPointPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Percentage of data points with status terverifikasi
+        averageConfidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Average confidence score across all data points
+        byStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusCount"
+        byScale:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScaleCount"
+
+    CalendarEntry:
+      type: object
+      required:
+        - reportId
+        - izinId
+        - companyName
+        - idIzin
+        - projectName
+        - periodLabel
+        - deadline
+        - status
+        - daysRemaining
+        - overdue
+      properties:
+        reportId:
+          type: integer
+        izinId:
+          type: integer
+        companyName:
+          type: string
+        idIzin:
+          type: string
+          description: Id Izin proyek terkait tenggat ini
+        projectName:
+          type: ["string", "null"]
+        periodLabel:
+          type: string
+        deadline:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        daysRemaining:
+          type: integer
+        overdue:
+          type: boolean
+
+    FlaggedDataPoint:
+      type: object
+      required:
+        - id
+        - reportId
+        - companyName
+        - category
+        - label
+        - status
+        - confidence
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: integer
+        companyName:
+          type: string
+        category:
+          $ref: "#/components/schemas/DataCategory"
+        label:
+          type: string
+        value:
+          type: ["number", "null"]
+        source:
+          type: ["string", "null"]
+        status:
+          $ref: "#/components/schemas/DataStatus"
+        confidence:
+          type: integer
+    DataQuality:
+      type: object
+      required:
+        - verifiedCount
+        - needsVerificationCount
+        - estimateCount
+        - missingSourceCount
+        - lowConfidenceCount
+        - flagged
+      properties:
+        verifiedCount:
+          type: integer
+        needsVerificationCount:
+          type: integer
+        estimateCount:
+          type: integer
+        missingSourceCount:
+          type: integer
+        lowConfidenceCount:
+          type: integer
+          description: Data points with confidence below 70
+        flagged:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlaggedDataPoint"

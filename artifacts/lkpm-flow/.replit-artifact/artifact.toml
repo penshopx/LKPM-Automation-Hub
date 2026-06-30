@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "LKPM-Flow"
+version = "1.0.0"
+id = "artifacts/lkpm-flow"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24225
+
+[services.development]
+run = "pnpm --filter @workspace/lkpm-flow run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lkpm-flow", "run", "build" ]
+publicDir = "artifacts/lkpm-flow/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24225"
+BASE_PATH = "/"

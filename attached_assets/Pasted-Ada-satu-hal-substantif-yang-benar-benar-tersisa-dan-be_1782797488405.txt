@@ -1,0 +1,33 @@
+Ada satu hal substantif yang benar-benar tersisa dan berdampak ke seluruh sistem: memverifikasi perubahan tenggat **10 → 15** (Permen Investasi 5/2025). Kalau benar, tanggal *Batas Akhir* di seluruh sistem perlu disesuaikan. Saya verifikasi dulu ke sumber resmi.
+
+Verifikasi **konklusif**: tenggat memang berubah dari tanggal **10 → 15** lewat **Perka BKPM 5/2025 (Pasal 285 ayat 3)**, berlaku **2 Oktober 2025**, dan dikonfirmasi langsung oleh pengumuman BKPM (LKPM TW I 2026 dibuka 1–15 April 2026). Ini koreksi penting — saya akan rapikan seluruh sistem dari tanggal 10 ke 15. Pertama saya cek tanggal yang tersimpan di Tracker.
+
+Semua 5 baris memakai tanggal 10. Saya perbarui ke tanggal 15 sekaligus.
+
+Semua baris Tracker sudah ke tanggal 15. Sekarang saya perbarui referensi teks "tanggal 10" di halaman-halaman terkait. Saya muat dulu halaman yang kemungkinan menyebut tenggat.
+
+Saya sudah punya isi halaman-halaman kuncinya. Sekarang saya perbarui semua referensi "tanggal 10 → 15" sekaligus (Blueprint, Pusat Komando, Metodologi, Studi Kasus, Regulasi) dan memuat Panduan Field OSS untuk dicek.
+
+Bagus — Panduan Field OSS ternyata tidak menyebut tanggal spesifik, jadi tak perlu diubah. Saya cek tiga panduan per skala dan baris contoh untuk memastikan tidak ada sisa "tanggal 10".
+
+Ditemukan sisa "tanggal 10" di ketiga panduan per skala. Saya perbaiki sekaligus. (Baris contoh sudah benar di tanggal 15.)
+
+Selesai — koreksi regulasi terpenting sudah dirapikan menyeluruh. Inilah yang "tersisa" dan kini sudah dituntaskan.
+
+**Temuan & koreksi:** verifikasi memastikan **Perka BKPM No. 5 Tahun 2025 (Pasal 285 ayat 3)**, berlaku **2 Oktober 2025**, mengubah tenggat LKPM dari tanggal **10 → 15** tiap periode. Dikonfirmasi pengumuman resmi BKPM (LKPM TW I 2026 dibuka 1–15 April 2026) dan beberapa sumber hukum.
+
+Yang saya selaraskan ke tanggal **15** (15 Apr · 15 Jul · 15 Okt · 15 Jan; UMK 15 Jul & 15 Jan):
+
+| Area | Perubahan |
+| --- | --- |
+| 🗂️ **Tracker** | 5 baris (Batas Akhir 10→15, termasuk baris contoh) |
+| 📑 **Blueprint** | Tabel kalender + dasar hukum (tambah Perka 5/2025) |
+| 🎛️ **Pusat Komando** | Ritme pengingat |
+| 📚 **Metodologi** | Contoh metadata jatuh tempo |
+| 🎬 **Studi Kasus** | Tenggat ketiga skenario |
+| ⚖️ **Regulasi** | Status "indikasi" → **terkonfirmasi**  • baris Perka 5/2025 |
+| 🤝📘🏢 **3 Panduan skala** | Jadwal Kecil/Menengah/Besar |
+
+Catatan tambahan dari Perka 5/2025 yang sudah saya rekam di halaman regulasi: **cakupan wajib lapor diperluas** (pengecualian dipersempit) dan **format menambah data kepatuhan perizinan**. Saya juga sudah cek Panduan Field OSS — tidak menyebut tanggal spesifik, jadi tak perlu diubah.
+
+Dengan ini, sistem LKPM konsisten dan akurat secara regulasi. Yang benar-benar tersisa hanyalah **pengaktifan agen** (masih terblokir backend / menunggu pembuatan manual). Mau lanjut ke pengaktifan agen, atau pindah ke proyek **LKUT** di chat baru?

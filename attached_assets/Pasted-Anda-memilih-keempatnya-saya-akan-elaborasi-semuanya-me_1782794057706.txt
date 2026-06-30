@@ -1,0 +1,25 @@
+Anda memilih keempatnya — saya akan elaborasi semuanya menjadi empat halaman pendalaman. Untuk bagian regulasi & sanksi, saya grounding dulu agar rinciannya akurat, lalu menyusun keempat halaman.
+
+Grounding regulasi selesai. Sekarang saya susun keempat halaman pendalaman sekaligus (SOP data, playbook agen S1–S6, studi kasus per skala, dan regulasi/sanksi).
+
+Keempat halaman pendalaman sudah jadi. Sekarang saya tautkan semuanya ke Pusat Komando dalam satu seksi baru "Pendalaman".
+
+Elaborasi LKPM selesai. Saya menambahkan empat halaman pendalaman dan menautkan semuanya ke Pusat Komando.
+
+Keempat halaman pendalaman, sesuai pilihan Anda:
+
+| # | Halaman | Isi inti |
+| --- | --- | --- |
+| 🔍 | **SOP Pengumpulan & Verifikasi 5 Komponen Data** | Per komponen (investasi, tenaga kerja, produksi, kewajiban, kendala): sumber data, cara tarik, verifikasi, rekonsiliasi, kesalahan umum + gate G2–G3 |
+| 🤖 | **Playbook Operasional Agen S1–S6** | Pemicu, input, langkah, output, gate, dan jalur eskalasi tiap spesialis & sub-agennya |
+| 🎬 | **Studi Kasus Siklus Lengkap per Skala** | Tiga skenario end-to-end H-30→arsip: Kecil (Pendamping UMK), Menengah (Hibrida), Besar (Penuh) |
+| ⚖️ | **Pendalaman Regulasi & Tahapan Sanksi** | UU 25/2007 Ps.15, Perka BKPM 5/2021, pengawasan berbasis risiko, 4 tahapan sanksi berjenjang |
+
+Beberapa catatan substansi yang penting:
+
+- **Sanksi berjenjang & kumulatif** — peringatan tertulis → pembatasan/penghentian sementara → pembekuan → pencabutan (NIB/Sertifikat Standar/Izin), dengan jeda khas **30 hari** antar-tahap (Pasal 47 Perka BKPM 5/2021).
+- ⚠️ **Temuan penting saat grounding:** ada indikasi **pembaruan regulasi (Permen Investasi 5/2025)** yang mengubah tenggat dari tanggal **10 → 15** dan memperketat pemantauan. Saya sudah catat ini di halaman regulasi sebagai tugas verifikasi wajib Sub-Agen S1.1 sebelum tiap siklus — jadi kolom *Batas Akhir* perlu dikonfirmasi ke OSS/JDIH BKPM, jangan diasumsikan masih tanggal 10.
+
+Semua sudah terhubung di **Pusat Komando** pada seksi baru **"Pendalaman (Elaborasi)"**.
+
+Mau saya teruskan ke arah lain — misalnya verifikasi mendalam soal perubahan tenggat 10→15 itu, atau kembali ke pengaktifan agen/proyek LKUT?

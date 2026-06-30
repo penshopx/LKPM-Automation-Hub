@@ -1,0 +1,27 @@
+Untuk mempraktikkan Trilogi Gustafta dengan benar, saya perlu membaca isi ketiga ebook itu dulu. Saya baca dokumentasi modul computer, lalu unggah & ekstrak file-nya.
+
+Saya baca dokumentasi modul computer dulu sebelum mengunggah dan mengekstrak file.
+
+Saya unggah ketiga ebook ke sandbox lalu ekstrak teksnya untuk memahami metodologi Trilogi Gustafta.
+
+Sekarang saya ekstrak teks dari ketiga ebook untuk memahami metodologinya.
+
+Saya sudah membaca ketiga ebook. **Trilogi Gustafta** (Trilogi DIALOG) terdiri dari:
+
+- **Buku I — DIALOG** (dari Monolog ke Dialog): bertumbuh lewat dialog Socratic, bukan menyerap pasif.
+- **Buku II — KOLABORASI**: kerja bersama tim multi-agent — 3 lapis reset, 3 pergeseran, dan *human gate*.
+- **Buku III — KREASI**: studio personal 1 manusia + 5 agen, etika anti-halusinasi (Anti-Blocking Doctrine), dan "suara manusia" (edit-with-grain 80/20).
+
+Sekarang saya terapkan ketiganya secara konkret ke proses penyusunan LKPM, sebagai halaman lanjutan dari blueprint.
+
+Selesai. Saya sudah membaca ketiga ebook Trilogi Gustafta dan mempraktikkannya menjadi metode kerja konkret untuk penyusunan dokumen LKPM, dalam halaman baru di bawah blueprint.
+
+Inti penerapannya — **tiga buku = tiga fase kerja LKPM:**
+
+- **Buku I · DIALOG** → fase **"memahami sebelum mengisi"**: LKPM diisi lewat *dialog Socratic* (protokol intake 5 tahap pertanyaan pemandu), bukan menyalin angka secara monolog. Dipraktikkan pada tahap Intake & Collect (S1, S2).
+- **Buku II · KOLABORASI** → fase **kerja tim manusia + agen**: 3 lapis reset (tugas/peran/arsitektur), 3 pergeseran (dari tool ke rekan, efisiensi ke skala sentuhan, pengetahuan ke pertimbangan langka), pemetaan pekerjaan 3 lapis, dan **Human Gate G4** — tidak ada laporan dikirim tanpa pertimbangan & persetujuan manusia.
+- **Buku III · KREASI** → fase **mencipta laporan kredibel**: studio 5-agen (Researcher/Narrator/Visualizer/Distributor/Auditor) dipetakan ke agen MultiClaw, **etika Anti-Halusinasi / Anti-Blocking Doctrine** (citation by default, confidence score, atribusi) yang krusial agar tak ada angka fabrikasi, plus prinsip **edit-with-grain 80/20** (suara manusia di laporan).
+
+Ditutup dengan **alur terpadu Trilogi × pipeline 8 tahap** dan **checklist kepatuhan Trilogi** sebelum submit.
+
+Catatan: prinsip anti-fabrikasi dari Buku III sangat selaras dengan sifat LKPM sebagai dokumen hukum — "tidak ada angka tanpa sumber, tidak ada pengiriman tanpa pertimbangan manusia". Kalau Anda mau, saya bisa lanjut menambahkan **kolom pendukung anti-halusinasi** ke tracker LKPM (mis. *Sumber Data* dan *Confidence Level* per baris) agar prinsip Buku III langsung operasional di database.

@@ -1,0 +1,27 @@
+Baik, saya lanjutkan dengan membuat **database tracker LKPM** yang siap operasional. Saya baca dulu spesifikasi pembuatan database-nya.
+
+Saya baca spesifikasi properti & view sebelum membuat database.
+
+Spesifikasi sudah saya pahami. Saya baca panduan formula sebentar (untuk kolom hitung-mundur deadline), lalu langsung buat databasenya.
+
+Spesifikasi formula sudah saya pahami. Sekarang saya buat **database tracker LKPM** yang menyatu di bagian bawah halaman blueprint, lengkap dengan kolom jenis & status perizinan (NIB · SS · Izin), tahapan pipeline sebagai status, hitung-mundur deadline, dan beberapa view (tabel, papan status, kalender, jatuh tempo terdekat).
+
+Tracker LKPM sudah jadi dan menyatu di bagian bawah halaman blueprint. Database ini siap diisi per perusahaan/periode.
+
+**Kolom yang tersedia:**
+
+- **Identitas & perizinan:** Perusahaan · NIB / Id Izin · Skala Usaha · **Jenis Perizinan (NIB · Sertifikat Standar · Izin)** · **Status SS** (Tidak ada / Pernyataan Mandiri / Perlu Verifikasi / Terverifikasi)
+- **Periode & deadline:** Periode (TW I–IV / Semester I–II) · Tahun · Batas Akhir
+- **Tahapan pipeline** sebagai *Status Pelaporan*: Belum Mulai → Intake → Collect → Validate → Draft → Review → Submit → Monitoring → Selesai
+- **Hitung-mundur otomatis** (*Status Deadline*): 🟢 sisa hari · 🟡 ≤7 hari · 🟠 jatuh tempo hari ini · 🔴 terlambat · ✅ selesai
+- **Komponen data LKPM:** Realisasi Investasi (Rp) · TKI · TKA · Nilai Produksi/Omzet (Rp) · CSR/Kemitraan/BPJS OK · Kendala Usaha
+- **Operasional:** PIC · Bukti Tanda Terima OSS · Catatan
+
+**4 view siap pakai:**
+
+1. **Semua Pelaporan** — tabel utama, diurutkan berdasarkan deadline
+2. **Papan Status (Pipeline)** — board per tahap pipeline (Intake → Selesai)
+3. **Kalender Deadline** — visual jatuh tempo per tanggal
+4. **Jatuh Tempo Terdekat** — hanya yang belum selesai, diurutkan terdekat
+
+Langkah berikutnya yang bisa saya bantu kalau Anda mau: **mengisi baris awal** (mis. mendaftarkan beberapa perusahaan beserta skala usaha & jenis perizinannya), atau **menambahkan view chart** ringkasan kepatuhan (mis. jumlah pelaporan per status atau per skala usaha). Mana yang ingin dilanjutkan?

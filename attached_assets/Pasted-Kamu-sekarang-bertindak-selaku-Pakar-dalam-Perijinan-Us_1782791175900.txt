@@ -1,0 +1,26 @@
+Kamu sekarang bertindak selaku Pakar dalam Perijinan Usaha (OSS-KBLI-SS-NIB) dan bisnisman progressif,  buatlah pipeline-framework dan workflow dari pembuatan atua penyusunan dokumen Laporan Kegiatan Penanaman Modal (LKPM) yang menjadi kewajiban bagi Perusahaan yang memiliki Id Izin.
+sebagai referensi :
+Regulasi LKPM (Laporan Kegiatan Penanaman Modal) diatur dalam UU Nomor 25 Tahun 2007 tentang Penanaman Modal dan Peraturan BKPM (Kementerian Investasi) Nomor 5 Tahun 2021. Pelaporan wajib dilakukan secara daring melalui sistem Online Single Submission (OSS) sesuai skala usaha Anda. [1, 2, 3, 4]Berikut adalah rincian aturan, kewajiban, dan tata cara pelaporannya:1. Dasar Hukum
+- UU No. 25 Tahun 2007 (Pasal 15): Mewajibkan setiap penanam modal untuk membuat laporan tentang kegiatan penanaman modal dan menyampaikannya kepada BKPM. [1]
+- Peraturan BKPM No. 5 Tahun 2021 (Pasal 32): Mengatur pedoman dan tata cara pengawasan perizinan berusaha berbasis risiko, termasuk jadwal dan kriteria kewajiban lapor. [1, 2]2. Kriteria Pelaku Usaha yang Wajib LaporBerdasarkan regulasi, kewajiban lapor LKPM dibedakan berdasarkan skala modal usaha: [1, 2, 3]
+- Usaha Kecil: Modal usaha Rp 1 miliar s.d. Rp 5 miliar.
+- Usaha Menengah: Modal usaha Rp 5 miliar s.d. Rp 10 miliar.
+- Usaha Besar: Modal usaha lebih dari Rp 10 miliar.
+- Catatan: Usaha Mikro dan sektor khusus seperti hulu migas, perbankan, dan asuransi dibebaskan dari kewajiban lapor LKPM. [1, 2, 3, 4]3. Periode Pelaporan LKPMJadwal pelaporan ditentukan berdasarkan skala usaha: [1]
+- Usaha Kecil: Dilaporkan setiap 6 bulan (semesteran). [1, 2]
+- Usaha Menengah & Besar: Dilaporkan setiap 3 bulan (triwulanan), dengan batas waktu:
+- Triwulan I: Paling lambat tanggal 10 April.
+- Triwulan II: Paling lambat tanggal 10 Juli.
+- Triwulan III: Paling lambat tanggal 10 Oktober.
+- Triwulan IV: Paling lambat tanggal 10 Januari tahun berikutnya. [1, 2, 3, 4, 5]4. Komponen yang DilaporkanDalam pelaporan LKPM, pelaku usaha harus mengisi data berikut: [1]
+- Realisasi Investasi: Meliputi modal tetap (tanah, bangunan, mesin) dan modal kerja.
+- Penyerapan Tenaga Kerja: Jumlah Tenaga Kerja Indonesia (TKI) dan Tenaga Kerja Asing (TKA).
+- Produksi Barang/Jasa: Nilai produksi atau omzet.
+- Kewajiban Perusahaan: Pelaksanaan program CSR, kemitraan, dan BPJS.
+- Kendala Usaha: Jika ada permasalahan yang sedang dihadapi dalam menjalankan proyek. [1, 2, 3, 4, 5]5. Sanksi AdministratifPelaku usaha yang mengabaikan kewajiban ini akan dikenakan sanksi berupa: [1, 2]
+- Peringatan tertulis.
+- Pembatasan kegiatan usaha.
+- Pembekuan kegiatan usaha.
+- Pencabutan perizinan berusaha. [1, 2, 3]
+
+sebagai Agentic AI MultiClaw-OpenClaw kamu buat Agen Spesialis dan Agen Sub Spesialis kamu untuk pembuatan LKPM diatas.
