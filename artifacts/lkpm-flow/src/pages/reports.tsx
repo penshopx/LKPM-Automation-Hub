@@ -34,8 +34,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { operatingModeLabels, scaleLabels, statusLabels, periodTypeLabels, labelOf } from "@/lib/labels";
+import { toCsv, downloadCsv } from "@/lib/export-csv";
+import type { Report } from "@workspace/api-client-react";
 
 const statusColors: Record<string, string> = {
   intake: "bg-slate-100 text-slate-700",
@@ -267,11 +269,62 @@ function NewReportDialog() {
   );
 }
 
+function exportReportsCsv(reports: Report[]) {
+  const headers = [
+    "Perusahaan",
+    "Proyek",
+    "Id Izin / NIB",
+    "Skala",
+    "Mode Operasi",
+    "Jenis Periode",
+    "Periode",
+    "Tahun",
+    "Tenggat",
+    "Status",
+    "Maker",
+    "Checker",
+    "Approver",
+    "Resi OSS",
+  ];
+  const rows = reports.map((r) => [
+    r.companyName,
+    r.projectName ?? "",
+    r.idIzin,
+    labelOf(scaleLabels, r.scale),
+    labelOf(operatingModeLabels, r.operatingMode),
+    labelOf(periodTypeLabels, r.periodType),
+    r.periodLabel,
+    r.year,
+    r.deadline,
+    labelOf(statusLabels, r.status),
+    r.makerName ?? "",
+    r.checkerName ?? "",
+    r.approverName ?? "",
+    r.ossReceipt ?? "",
+  ]);
+  const csv = toCsv(headers, rows);
+  const stamp = new Date().toISOString().slice(0, 10);
+  downloadCsv(`laporan-lkpm-${stamp}.csv`, csv);
+}
+
 export default function Reports() {
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const { data: reports, isLoading } = useListReports({}, {
     query: { queryKey: getListReportsQueryKey({}) }
   });
+
+  const handleExport = () => {
+    if (!reports || reports.length === 0) {
+      toast({ title: "Tidak ada laporan untuk diekspor" });
+      return;
+    }
+    exportReportsCsv(reports);
+    toast({
+      title: "Ekspor berhasil",
+      description: `${reports.length} laporan diunduh sebagai CSV.`,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -280,7 +333,16 @@ export default function Reports() {
           <h1 className="text-2xl font-bold tracking-tight">Laporan LKPM</h1>
           <p className="text-muted-foreground">Pantau dan kelola seluruh pelaporan aktivitas investasi.</p>
         </div>
-        <NewReportDialog />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            disabled={isLoading || !reports || reports.length === 0}
+          >
+            <Download className="h-4 w-4 mr-1" /> Ekspor CSV
+          </Button>
+          <NewReportDialog />
+        </div>
       </div>
 
       <div className="border rounded-md bg-card">
