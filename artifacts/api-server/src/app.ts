@@ -74,6 +74,12 @@ app.use(express.urlencoded({ extended: true }));
 const clerkPublishableKey =
   process.env.CLERK_PUBLISHABLE_KEY ?? process.env.VITE_CLERK_PUBLISHABLE_KEY;
 
+if (!clerkPublishableKey) {
+  throw new Error(
+    "Clerk publishable key tidak dikonfigurasi. Set CLERK_PUBLISHABLE_KEY (atau VITE_CLERK_PUBLISHABLE_KEY sebagai fallback) sebelum menjalankan API server.",
+  );
+}
+
 app.use(
   clerkMiddleware((req) => ({
     publishableKey: publishableKeyFromHost(
