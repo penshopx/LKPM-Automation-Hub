@@ -18,6 +18,7 @@ import {
   dataPointsTable,
   constraintsTable,
   creditLedgerTable,
+  basisPermitsTable,
 } from "@workspace/db";
 
 // Capture every prompt the (mocked) AI client is asked to generate so the test
@@ -113,6 +114,8 @@ vi.mock("../lib/ai", async () => {
     MODEL: "gemini-2.5-flash",
     SCALE_LABELS: labels.SCALE_LABELS,
     STATUS_LABELS: labels.STATUS_LABELS,
+    BASIS_PERMIT_TYPE_LABELS: labels.BASIS_PERMIT_TYPE_LABELS,
+    BASIS_PERMIT_STATUS_LABELS: labels.BASIS_PERMIT_STATUS_LABELS,
   };
 });
 
@@ -644,5 +647,101 @@ describe("POST /api/assistant/orchestrate end-to-end gating", () => {
     expect(result.deadlineRisk.recommendations).toEqual([SAFE_FALLBACK]);
     expect(body).not.toContain(REJECTED_NOSOURCE_VALUE);
     expect(body).not.toContain(REJECTED_LOWCONF_VALUE);
+  });
+
+  it("flags incomplete and expired basis permits in the compliance output and audit", async () => {
+    // A dedicated company/izin/report whose Izin has three basis permits: one
+    // fulfilled (terbit, still valid), one not yet issued, and one lapsed past
+    // its validUntil. Only the two problematic ones must be flagged.
+    const [company] = await db
+      .insert(companiesTable)
+      .values({
+        consultantId: CONSULTANT_A,
+        name: `PT Uji Perizinan ${suffix}`,
+        nib: `NIB-PERMIT-${suffix}`,
+        scale: "kecil",
+        operatingMode: "komersial",
+      })
+      .returning({ id: companiesTable.id });
+    createdCompanyIds.push(company.id);
+
+    const [izin] = await db
+      .insert(izinTable)
+      .values({
+        companyId: company.id,
+        idIzin: `IZIN-PERMIT-${suffix}`,
+        scale: "kecil",
+      })
+      .returning({ id: izinTable.id });
+
+    const [permitReport] = await db
+      .insert(reportsTable)
+      .values({
+        izinId: izin.id,
+        scale: "kecil",
+        periodType: "triwulan",
+        periodLabel: "Triwulan I",
+        year: 2026,
+        deadline: "2026-04-15",
+      })
+      .returning({ id: reportsTable.id });
+
+    await db.insert(basisPermitsTable).values([
+      { izinId: izin.id, type: "kkpr", status: "terbit" },
+      { izinId: izin.id, type: "persetujuan_lingkungan", status: "belum_ada" },
+      {
+        izinId: izin.id,
+        type: "pbg",
+        status: "terbit",
+        validUntil: "2020-01-01",
+      },
+    ]);
+
+    const res = await fetch(`${baseUrl}/api/assistant/orchestrate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reportId: permitReport.id }),
+    });
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    const events = parseSseEvents(body);
+
+    const finalEvent = events.find((e) => e.type === "final");
+    expect(finalEvent).toBeDefined();
+    const result = finalEvent!.result as {
+      compliance: {
+        status: string;
+        permits: {
+          type: string;
+          label: string;
+          expired: boolean;
+          issue: string;
+        }[];
+      };
+      dataNotes: string;
+      audit: { agent: string; contribution: string }[];
+    };
+
+    // The fulfilled permit (kkpr, terbit, valid) is NOT flagged; the other two
+    // are, with the lapsed one marked expired.
+    const permits = result.compliance.permits;
+    expect(permits).toHaveLength(2);
+    const byType = Object.fromEntries(permits.map((p) => [p.type, p]));
+    expect(byType.kkpr).toBeUndefined();
+    expect(byType.persetujuan_lingkungan).toBeDefined();
+    expect(byType.persetujuan_lingkungan.expired).toBe(false);
+    expect(byType.pbg).toBeDefined();
+    expect(byType.pbg.expired).toBe(true);
+
+    // Incomplete permits keep readiness at "perlu_dilengkapi".
+    expect(result.compliance.status).toBe("perlu_dilengkapi");
+
+    // The warnings surface in the assembled dataNotes and the compliance audit.
+    expect(result.dataNotes).toContain("Perizinan dasar OSS");
+    const kepatuhanAudit = result.audit.find((a) => a.agent === "kepatuhan");
+    expect(kepatuhanAudit).toBeDefined();
+    expect(kepatuhanAudit!.contribution).toContain(
+      "Perizinan dasar perlu perhatian",
+    );
   });
 });

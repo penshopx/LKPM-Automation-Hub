@@ -36,6 +36,7 @@ import {
   ShieldCheck,
   ClipboardList,
   CalendarClock,
+  AlertTriangle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -78,6 +79,14 @@ interface ValidationData {
 interface ComplianceData {
   status: string;
   missing: { section: string; label: string; note: string }[];
+  permits?: {
+    type: string;
+    label: string;
+    status: string;
+    statusLabel: string;
+    expired: boolean;
+    issue: string;
+  }[];
   summary: string;
 }
 interface DeadlineRiskData {
@@ -528,6 +537,36 @@ export default function Asisten() {
                   ))}
                 </ul>
               )}
+              {result.compliance.permits &&
+                result.compliance.permits.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-foreground">
+                      Perizinan dasar OSS
+                    </p>
+                    <ul className="space-y-1">
+                      {result.compliance.permits.map((p, i) => (
+                        <li
+                          key={i}
+                          className="text-sm text-muted-foreground flex items-start gap-1.5"
+                        >
+                          <AlertTriangle
+                            className={
+                              p.expired
+                                ? "h-3.5 w-3.5 mt-0.5 shrink-0 text-destructive"
+                                : "h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-600"
+                            }
+                          />
+                          <span>
+                            <span className="font-medium text-foreground">
+                              {p.label}
+                            </span>{" "}
+                            ({p.statusLabel}): {p.issue}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
             </CardContent>
           </Card>
 

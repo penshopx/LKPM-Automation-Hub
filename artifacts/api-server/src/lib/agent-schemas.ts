@@ -40,6 +40,20 @@ export const ComplianceSchema = z.object({
       note: z.string(),
     }),
   ),
+  // Grounded deterministically in the orchestrator from the Izin's basis
+  // permits; optional here so an LLM reply that omits it still parses.
+  permits: z
+    .array(
+      z.object({
+        type: z.string(),
+        label: z.string(),
+        status: z.string(),
+        statusLabel: z.string(),
+        expired: z.boolean(),
+        issue: z.string(),
+      }),
+    )
+    .optional(),
   summary: z.string(),
 });
 

@@ -30,4 +30,9 @@ export const MODEL = "gemini-2.5-flash";
 // Label maps live in labels.ts (no env side effects) so they can be imported by
 // pure, testable modules without instantiating the AI client. Re-exported here
 // to keep existing `from "../lib/ai"` imports working.
-export { SCALE_LABELS, STATUS_LABELS } from "./labels";
+export {
+  SCALE_LABELS,
+  STATUS_LABELS,
+  BASIS_PERMIT_TYPE_LABELS,
+  BASIS_PERMIT_STATUS_LABELS,
+} from "./labels";

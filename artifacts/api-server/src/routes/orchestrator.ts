@@ -6,11 +6,19 @@ import {
   companiesTable,
   dataPointsTable,
   constraintsTable,
+  basisPermitsTable,
 } from "@workspace/db";
 import { eq, asc, and } from "drizzle-orm";
 import type { z } from "zod";
 import { OrchestrateReportDraftBody } from "@workspace/api-zod";
-import { ai, MODEL, SCALE_LABELS, STATUS_LABELS } from "../lib/ai";
+import {
+  ai,
+  MODEL,
+  SCALE_LABELS,
+  STATUS_LABELS,
+  BASIS_PERMIT_TYPE_LABELS,
+  BASIS_PERMIT_STATUS_LABELS,
+} from "../lib/ai";
 import { getConsultantId } from "../middlewares/auth";
 import { getUserRole } from "../lib/user";
 import {
@@ -126,6 +134,7 @@ router.post("/assistant/orchestrate", async (req, res) => {
   const [row] = await db
     .select({
       report: reportsTable,
+      izinId: reportsTable.izinId,
       companyName: companiesTable.name,
       scale: reportsTable.scale,
       operatingMode: companiesTable.operatingMode,
@@ -161,7 +170,7 @@ router.post("/assistant/orchestrate", async (req, res) => {
   }
   const consumedBucket: CreditBucket | null = charge.bucket;
 
-  const [dataPointRows, constraintRows] = await Promise.all([
+  const [dataPointRows, constraintRows, permitRows] = await Promise.all([
     db
       .select()
       .from(dataPointsTable)
@@ -172,6 +181,11 @@ router.post("/assistant/orchestrate", async (req, res) => {
       .from(constraintsTable)
       .where(eq(constraintsTable.reportId, body.reportId))
       .orderBy(asc(constraintsTable.id)),
+    db
+      .select()
+      .from(basisPermitsTable)
+      .where(eq(basisPermitsTable.izinId, row.izinId))
+      .orderBy(asc(basisPermitsTable.id)),
   ]);
 
   const dataPoints: DataPointCtx[] = dataPointRows.map((dp) => ({
@@ -218,6 +232,41 @@ router.post("/assistant/orchestrate", async (req, res) => {
   const daysRemaining = Math.round(
     (deadlineDate.getTime() - today.getTime()) / 86400000,
   );
+
+  // Basis-permit (OSS RBA perizinan dasar) completeness is a real LKPM
+  // compliance risk, so factor it into readiness DETERMINISTICALLY (not via the
+  // LLM). A permit is fulfilled only if it is "terbit" and not past its
+  // validUntil; anything else (belum ada, dalam proses, kedaluwarsa, or lapsed)
+  // is flagged. The `issue` text is built from real DB fields only, so it never
+  // carries a guessed value (anti-hallucination doctrine).
+  const permitIssues = permitRows
+    .map((p) => {
+      const pastValidUntil =
+        p.validUntil !== null && new Date(`${p.validUntil}T00:00:00`) < today;
+      const expired = p.status === "kedaluwarsa" || pastValidUntil;
+      const fulfilled = p.status === "terbit" && !pastValidUntil;
+      const typeLabel = BASIS_PERMIT_TYPE_LABELS[p.type] ?? p.type;
+      const statusLabel = BASIS_PERMIT_STATUS_LABELS[p.status] ?? p.status;
+      let issue: string;
+      if (expired) {
+        issue = pastValidUntil
+          ? `Perizinan dasar sudah melewati masa berlaku (berlaku hingga ${p.validUntil}); perbarui sebelum menyampaikan LKPM.`
+          : "Perizinan dasar berstatus kedaluwarsa; perbarui sebelum menyampaikan LKPM.";
+      } else {
+        issue = `Perizinan dasar belum terbit (status: ${statusLabel}); selesaikan sebelum menyampaikan LKPM.`;
+      }
+      return {
+        type: p.type,
+        label: typeLabel,
+        status: p.status,
+        statusLabel,
+        expired,
+        fulfilled,
+        issue,
+      };
+    })
+    .filter((p) => !p.fulfilled)
+    .map(({ fulfilled: _fulfilled, ...rest }) => rest);
 
   const profileText = `PROFIL LAPORAN:
 - Perusahaan: ${row.companyName}
@@ -397,10 +446,23 @@ Kembalikan objek JSON: {"rejected": [{"id": id, "label": "label", "reason": "ala
           }`,
       )
       .join("\n");
+    const permitFactsText = permitRows.length
+      ? permitRows
+          .map(
+            (p) =>
+              `- ${BASIS_PERMIT_TYPE_LABELS[p.type] ?? p.type}: ${
+                BASIS_PERMIT_STATUS_LABELS[p.status] ?? p.status
+              }${p.validUntil ? ` (berlaku hingga ${p.validUntil})` : ""}`,
+          )
+          .join("\n")
+      : "(belum ada perizinan dasar tercatat pada Izin ini)";
+    const permitIssueText = permitIssues.length
+      ? permitIssues.map((p) => `- ${p.label}: ${p.issue}`).join("\n")
+      : "(tidak ada — seluruh perizinan dasar sudah terbit dan berlaku)";
     const { value: compliance, degraded: complianceDegraded } = await runAgent(
       "kepatuhan",
       ComplianceSchema,
-      `Anda Agen Pemeriksa Kepatuhan OSS. Berdasarkan FAKTA kelengkapan bagian wajib untuk skala ${scaleLabel} berikut (jangan menambah bagian wajib lain), tentukan kepatuhan kelengkapan LKPM.
+      `Anda Agen Pemeriksa Kepatuhan OSS. Berdasarkan FAKTA kelengkapan bagian wajib untuk skala ${scaleLabel} DAN kelengkapan perizinan dasar (OSS RBA) berikut (jangan menambah bagian wajib atau perizinan lain), tentukan kepatuhan kelengkapan LKPM.
 
 BAGIAN WAJIB (skala ${scaleLabel}):
 ${requiredText}
@@ -411,7 +473,15 @@ Bagian yang belum ada data: ${
           : "(tidak ada — semua bagian wajib memiliki data)"
       }
 
-Kembalikan objek JSON: {"status": "lengkap" atau "perlu_dilengkapi", "missing": [{"section": "kode bagian", "label": "nama bagian", "note": "apa yang perlu dilengkapi"}], "summary": "ringkasan kepatuhan 1-2 kalimat"}`,
+PERIZINAN DASAR OSS RBA:
+${permitFactsText}
+
+Perizinan dasar yang perlu perhatian:
+${permitIssueText}
+
+Perizinan dasar dianggap terpenuhi hanya bila berstatus terbit dan belum melewati masa berlaku. Jangan mengarang nomor dokumen, tanggal, atau status; cukup mengacu pada fakta di atas.
+
+Kembalikan objek JSON: {"status": "lengkap" atau "perlu_dilengkapi", "missing": [{"section": "kode bagian", "label": "nama bagian", "note": "apa yang perlu dilengkapi"}], "summary": "ringkasan kepatuhan 1-2 kalimat yang juga menyebut kondisi perizinan dasar"}`,
       { status: "", missing: [], summary: "" },
     );
     // Ground the missing list deterministically so it cannot be hallucinated.
@@ -426,14 +496,22 @@ Kembalikan objek JSON: {"status": "lengkap" atau "perlu_dilengkapi", "missing": 
         "Belum ada data point untuk bagian wajib ini.",
       ).text || "Belum ada data point untuk bagian wajib ini.",
     }));
+    // Ground the basis-permit issue list deterministically from the DB so the
+    // LLM cannot invent, drop, or misreport a permit. The `issue` text was built
+    // from real DB fields only, so no anti-hallucination sanitize is needed.
+    compliance.permits = permitIssues;
     // The compliance summary is also surfaced verbatim (done event + audit).
     compliance.summary = sanitizeAgentText(
       compliance.summary,
       rejectedRawValues,
       SANITIZED_AGENT_TEXT,
     ).text;
+    // Readiness now factors in basis-permit completeness: incomplete/expired
+    // permits mark the report as still needing work.
     compliance.status =
-      missingSections.length === 0 ? "lengkap" : "perlu_dilengkapi";
+      missingSections.length === 0 && permitIssues.length === 0
+        ? "lengkap"
+        : "perlu_dilengkapi";
     if (!complianceDegraded) done("kepatuhan", compliance);
 
     // === 4. Agen Penyusun Narasi (gated: only validated data) ===
@@ -540,6 +618,13 @@ Kembalikan objek JSON: {"riskLevel": "rendah|sedang|tinggi", "summary": "ringkas
           .join(", ")}.`,
       );
     }
+    if (permitIssues.length) {
+      dataNotesParts.push(
+        `Perizinan dasar OSS yang perlu dilengkapi/diperbarui:\n${permitIssues
+          .map((p) => `- ${p.label}: ${p.issue}`)
+          .join("\n")}`,
+      );
+    }
     if (!dataNotesParts.length) {
       dataNotesParts.push(
         "Seluruh data point lolos validasi dan bagian wajib telah terisi. Tetap verifikasi ulang ke sumber resmi sebelum submit.",
@@ -572,7 +657,13 @@ Kembalikan objek JSON: {"riskLevel": "rendah|sedang|tinggi", "summary": "ringkas
         {
           agent: "kepatuhan",
           label: AGENT_LABELS.kepatuhan,
-          contribution: compliance.summary ?? "",
+          contribution: `${compliance.summary ?? ""}${
+            permitIssues.length
+              ? ` Perizinan dasar perlu perhatian (${permitIssues.length}): ${permitIssues
+                  .map((p) => p.label)
+                  .join(", ")}.`
+              : " Seluruh perizinan dasar sudah terbit dan berlaku."
+          }`,
         },
         {
           agent: "narasi",
