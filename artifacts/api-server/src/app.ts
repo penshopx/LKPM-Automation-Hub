@@ -67,11 +67,18 @@ app.post(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// The publishable key is the SAME value the frontend uses
+// (VITE_CLERK_PUBLISHABLE_KEY). Derive it from a single source so the two can't
+// silently diverge: prefer CLERK_PUBLISHABLE_KEY when set, otherwise fall back
+// to VITE_CLERK_PUBLISHABLE_KEY.
+const clerkPublishableKey =
+  process.env.CLERK_PUBLISHABLE_KEY ?? process.env.VITE_CLERK_PUBLISHABLE_KEY;
+
 app.use(
   clerkMiddleware((req) => ({
     publishableKey: publishableKeyFromHost(
       getClerkProxyHost(req) ?? "",
-      process.env.CLERK_PUBLISHABLE_KEY,
+      clerkPublishableKey,
     ),
   })),
 );
