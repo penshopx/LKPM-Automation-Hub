@@ -9,4 +9,5 @@
 - [Billing & credits](billing-credits.md) — Stripe monetization: free tier gates quota/automation only; consumeCredit needs per-consultant advisory lock; never trust client priceId; resolvePlan falls back to free when Stripe absent.
 - [Account roles](account-roles.md) — two roles (konsultan=many companies, perusahaan=1); `consultantId` column = any owner Clerk id; enforce single-company + reject null-role server-side in POST /companies (UI gate is not enough).
 - [Orchestrator free-text doctrine](orchestrator-freetext-doctrine.md) — NO agent prose surfaced verbatim may carry a gate-rejected raw value; sanitize-or-drop every channel (not narasi, it only sees validated data).
+- [Replit run provisioning](replit-run-provisioning.md) — import can't carry AI/Auth creds; ai.ts prefers AI_INTEGRATIONS_GEMINI_* then GEMINI_API_KEY; Clerk Auth is a manual toolbar step; run via plain workflows + dev Vite /api proxy when artifact orchestrator absent.
 - [CSV export convention](csv-export-convention.md) — exports use `;` delimiter + UTF-8 BOM (Indonesian Excel) and must neutralize `=+-@` formula-injection; reuse `lib/export-csv.ts`.

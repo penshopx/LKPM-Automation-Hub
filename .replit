@@ -5,4 +5,42 @@ integrations = ["javascript_gemini_ai_integrations:2.0.0"]
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+DEFAULT_OBJECT_STORAGE_BUCKET_ID = "replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018"
+PRIVATE_OBJECT_DIR = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/.private"
+PUBLIC_OBJECT_SEARCH_PATHS = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/public"
+CLERK_PUBLISHABLE_KEY = "AIzaSyAdPGow5dDyidEBSu4RIQTdw0rDGdzrvdY"
+CLERK_SECRET_KEY = "sk_test_Cs5NNQIM3bvznvr1BVf1fHzI0SeFrMBZvpokHQZbYY"
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_bWlnaHR5LWZpbGx5LTgzLmNsZXJrLmFjY291bnRzLmRldiQ"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "API Server"
+
+[[workflows.workflow]]
+name = "API Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=8080 pnpm --filter @workspace/api-server run dev"
+waitForPort = 8080
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
 # Replit config file - secrets removed

@@ -66,6 +66,16 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+    // In the artifact model the platform router forwards /api to the API
+    // service before it reaches Vite, so this proxy is a no-op there. It only
+    // matters when the web dev server runs standalone (e.g. a plain workflow),
+    // forwarding /api calls to the local API server. Dev-only.
+    proxy: {
+      "/api": {
+        target: `http://localhost:${process.env.API_PORT ?? "8080"}`,
+        changeOrigin: true,
+      },
+    },
   },
   preview: {
     port,
