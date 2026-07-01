@@ -28,6 +28,8 @@ tags:
     description: Asisten AI (penyusun draf laporan dan mentor LKPM dialog Socrates)
   - name: billing
     description: Langganan Stripe dan kredit pendampingan AI
+  - name: notifications
+    description: Pengingat tenggat LKPM dan preferensi notifikasi
 paths:
   /healthz:
     get:
@@ -989,6 +991,89 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CurrentUser"
+
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: Daftar notifikasi pengguna saat ini
+      description: >-
+        Mengembalikan notifikasi milik pengguna yang sedang masuk (terbaru
+        dahulu) beserta jumlah yang belum dibaca. Pemanggilan ini juga memicu
+        pembuatan pengingat tenggat terbaru untuk pengguna secara idempoten.
+      responses:
+        "200":
+          description: Daftar notifikasi
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationList"
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Tandai notifikasi sebagai dibaca
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Notifikasi yang diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Tandai semua notifikasi sebagai dibaca
+      responses:
+        "200":
+          description: Jumlah notifikasi yang ditandai dibaca
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarkAllReadResult"
+  /notification-preferences:
+    get:
+      operationId: getNotificationPreferences
+      tags: [notifications]
+      summary: Preferensi notifikasi pengguna saat ini
+      responses:
+        "200":
+          description: Preferensi notifikasi
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationPreferences"
+    patch:
+      operationId: updateNotificationPreferences
+      tags: [notifications]
+      summary: Perbarui preferensi notifikasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationPreferencesUpdate"
+      responses:
+        "200":
+          description: Preferensi notifikasi setelah diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationPreferences"
+
   /billing/summary:
     get:
       operationId: getBillingSummary
@@ -1252,6 +1337,109 @@ components:
           enum: [konsultan, perusahaan]
       required:
         - role
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: integer
+          nullable: true
+        type:
+          type: string
+          enum: [deadline_upcoming, deadline_overdue]
+          description: Jenis notifikasi
+        title:
+          type: string
+        body:
+          type: string
+        deadline:
+          type: string
+          nullable: true
+          description: Tanggal tenggat terkait (YYYY-MM-DD), bila ada
+        read:
+          type: boolean
+          description: Apakah notifikasi sudah dibaca
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - reportId
+        - type
+        - title
+        - body
+        - deadline
+        - read
+        - createdAt
+    NotificationList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        unreadCount:
+          type: integer
+      required:
+        - items
+        - unreadCount
+    MarkAllReadResult:
+      type: object
+      properties:
+        updated:
+          type: integer
+          description: Jumlah notifikasi yang ditandai dibaca
+      required:
+        - updated
+    NotificationPreferences:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Sakelar utama pengingat tenggat
+        inAppEnabled:
+          type: boolean
+          description: Kirim notifikasi di dalam aplikasi
+        emailEnabled:
+          type: boolean
+          description: Kirim pengingat via email (bila email tersedia)
+        email:
+          type: string
+          nullable: true
+          description: >-
+            Alamat email konsultan tujuan pengingat, disinkronkan dari profil
+            akun. Null bila belum tersinkron; pengiriman email dilewati bila null.
+        reminderLeadDays:
+          type: array
+          items:
+            type: integer
+          description: Ambang tenggang hari pengingat, mis. [7, 3, 1]
+      required:
+        - enabled
+        - inAppEnabled
+        - emailEnabled
+        - email
+        - reminderLeadDays
+    NotificationPreferencesUpdate:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        inAppEnabled:
+          type: boolean
+        emailEnabled:
+          type: boolean
+        email:
+          type: string
+          nullable: true
+          description: Alamat email konsultan tujuan pengingat (disinkronkan dari profil)
+        reminderLeadDays:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 365
     ReportDraftInput:
       type: object
       properties:

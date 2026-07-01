@@ -1,8 +1,9 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Building2, FileText, Calendar as CalendarIcon, ShieldAlert, ClipboardList, FileSpreadsheet, BookOpen, MessageSquareText, Printer, Workflow, Map, Database, BookMarked, Clapperboard, Scale, Sparkles, GraduationCap, Headset, CreditCard, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Building2, FileText, Calendar as CalendarIcon, ShieldAlert, ClipboardList, FileSpreadsheet, BookOpen, MessageSquareText, Printer, Workflow, Map, Database, BookMarked, Clapperboard, Scale, Sparkles, GraduationCap, Headset, CreditCard, LogOut, ChevronDown, Settings } from "lucide-react";
 import { useUser, useClerk } from "@clerk/react";
 import { useRole } from "@/lib/role";
+import { NotificationCenter } from "@/components/notification-center";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -98,6 +99,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       label: "Akun",
       items: [
         { href: "/langganan", label: "Langganan & Kredit", icon: CreditCard },
+        { href: "/pengaturan", label: "Pengaturan", icon: Settings },
       ],
     },
   ];
@@ -127,11 +129,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col md:flex-row bg-background">
       <aside className="w-full md:w-64 border-r bg-card flex flex-col hidden md:flex print:hidden">
-        <div className="p-4 border-b h-14 flex items-center">
+        <div className="p-4 border-b h-14 flex items-center justify-between">
           <h1 className="font-semibold text-lg flex items-center gap-2 text-primary">
             <ShieldAlert className="h-5 w-5" />
             LKPM-Flow
           </h1>
+          <NotificationCenter />
         </div>
         <nav className="flex-1 overflow-y-auto p-2 space-y-1">
           {navGroups.map((group) => {
@@ -177,11 +180,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </aside>
       
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 border-b bg-card flex items-center px-4 md:hidden print:hidden">
+        <header className="h-14 border-b bg-card flex items-center justify-between px-4 md:hidden print:hidden">
           <h1 className="font-semibold text-lg flex items-center gap-2 text-primary">
             <ShieldAlert className="h-5 w-5" />
             LKPM-Flow
           </h1>
+          <NotificationCenter />
         </header>
         <main className="flex-1 overflow-auto p-4 md:p-8 print:overflow-visible print:p-0">
           {children}

@@ -13,6 +13,7 @@ import orchestratorRouter from "./orchestrator";
 import helpdeskRouter from "./helpdesk";
 import meRouter from "./me";
 import billingRouter from "./billing";
+import notificationsRouter from "./notifications";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
@@ -37,5 +38,6 @@ router.use(dashboardRouter);
 router.use(anthropicRouter);
 router.use(orchestratorRouter);
 router.use(billingRouter);
+router.use(notificationsRouter);
 
 export default router;

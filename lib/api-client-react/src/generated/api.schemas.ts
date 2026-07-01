@@ -132,6 +132,67 @@ export interface SetRoleInput {
   role: SetRoleInputRole;
 }
 
+/**
+ * Jenis notifikasi
+ */
+export type NotificationType = typeof NotificationType[keyof typeof NotificationType];
+
+
+export const NotificationType = {
+  deadline_upcoming: 'deadline_upcoming',
+  deadline_overdue: 'deadline_overdue',
+} as const;
+
+export interface Notification {
+  id: number;
+  reportId: number | null;
+  /** Jenis notifikasi */
+  type: NotificationType;
+  title: string;
+  body: string;
+  /** Tanggal tenggat terkait (YYYY-MM-DD), bila ada */
+  deadline: string | null;
+  /** Apakah notifikasi sudah dibaca */
+  read: boolean;
+  createdAt: string;
+}
+
+export interface NotificationList {
+  items: Notification[];
+  unreadCount: number;
+}
+
+export interface MarkAllReadResult {
+  /** Jumlah notifikasi yang ditandai dibaca */
+  updated: number;
+}
+
+export interface NotificationPreferences {
+  /** Sakelar utama pengingat tenggat */
+  enabled: boolean;
+  /** Kirim notifikasi di dalam aplikasi */
+  inAppEnabled: boolean;
+  /** Kirim pengingat via email (bila email tersedia) */
+  emailEnabled: boolean;
+  /** Alamat email konsultan tujuan pengingat, disinkronkan dari profil akun. Null bila belum tersinkron; pengiriman email dilewati bila null. */
+  email: string | null;
+  /** Ambang tenggang hari pengingat, mis. [7, 3, 1] */
+  reminderLeadDays: number[];
+}
+
+export interface NotificationPreferencesUpdate {
+  enabled?: boolean;
+  inAppEnabled?: boolean;
+  emailEnabled?: boolean;
+  /** Alamat email konsultan tujuan pengingat (disinkronkan dari profil) */
+  email?: string | null;
+  /**
+     * @items.minimum 0
+     * @items.maximum 365
+     */
+  reminderLeadDays?: number[];
+}
+
 export interface ReportDraftInput {
   reportId: number;
   /** Penekanan opsional dari pengguna (mis. fokus realisasi investasi) */

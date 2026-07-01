@@ -2,6 +2,7 @@ import { runMigrations } from "stripe-replit-sync";
 import app from "./app";
 import { logger } from "./lib/logger";
 import { getStripeSync } from "./lib/stripeClient";
+import { startNotificationScheduler } from "./lib/notifications";
 
 /**
  * Best-effort Stripe bootstrap. Runs the stripe-schema migrations, registers a
@@ -56,4 +57,6 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
   void initStripe();
+  // Pengingat tenggat LKPM: jalan saat boot lalu setiap jam (idempoten).
+  startNotificationScheduler();
 });

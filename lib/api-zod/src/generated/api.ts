@@ -1062,6 +1062,89 @@ export const SetCurrentUserRoleResponse = zod.object({
 
 
 /**
+ * Mengembalikan notifikasi milik pengguna yang sedang masuk (terbaru dahulu) beserta jumlah yang belum dibaca. Pemanggilan ini juga memicu pembuatan pengingat tenggat terbaru untuk pengguna secara idempoten.
+ * @summary Daftar notifikasi pengguna saat ini
+ */
+export const ListNotificationsResponse = zod.object({
+  "items": zod.array(zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullable(),
+  "type": zod.enum(['deadline_upcoming', 'deadline_overdue']).describe('Jenis notifikasi'),
+  "title": zod.string(),
+  "body": zod.string(),
+  "deadline": zod.string().nullable().describe('Tanggal tenggat terkait (YYYY-MM-DD), bila ada'),
+  "read": zod.boolean().describe('Apakah notifikasi sudah dibaca'),
+  "createdAt": zod.coerce.date()
+})),
+  "unreadCount": zod.number()
+})
+
+
+/**
+ * @summary Tandai notifikasi sebagai dibaca
+ */
+export const MarkNotificationReadParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const MarkNotificationReadResponse = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullable(),
+  "type": zod.enum(['deadline_upcoming', 'deadline_overdue']).describe('Jenis notifikasi'),
+  "title": zod.string(),
+  "body": zod.string(),
+  "deadline": zod.string().nullable().describe('Tanggal tenggat terkait (YYYY-MM-DD), bila ada'),
+  "read": zod.boolean().describe('Apakah notifikasi sudah dibaca'),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Tandai semua notifikasi sebagai dibaca
+ */
+export const MarkAllNotificationsReadResponse = zod.object({
+  "updated": zod.number().describe('Jumlah notifikasi yang ditandai dibaca')
+})
+
+
+/**
+ * @summary Preferensi notifikasi pengguna saat ini
+ */
+export const GetNotificationPreferencesResponse = zod.object({
+  "enabled": zod.boolean().describe('Sakelar utama pengingat tenggat'),
+  "inAppEnabled": zod.boolean().describe('Kirim notifikasi di dalam aplikasi'),
+  "emailEnabled": zod.boolean().describe('Kirim pengingat via email (bila email tersedia)'),
+  "email": zod.string().nullable().describe('Alamat email konsultan tujuan pengingat, disinkronkan dari profil akun. Null bila belum tersinkron; pengiriman email dilewati bila null.'),
+  "reminderLeadDays": zod.array(zod.number()).describe('Ambang tenggang hari pengingat, mis. [7, 3, 1]')
+})
+
+
+/**
+ * @summary Perbarui preferensi notifikasi
+ */
+export const updateNotificationPreferencesBodyReminderLeadDaysItemMin = 0;
+export const updateNotificationPreferencesBodyReminderLeadDaysItemMax = 365;
+
+
+
+export const UpdateNotificationPreferencesBody = zod.object({
+  "enabled": zod.boolean().optional(),
+  "inAppEnabled": zod.boolean().optional(),
+  "emailEnabled": zod.boolean().optional(),
+  "email": zod.string().nullish().describe('Alamat email konsultan tujuan pengingat (disinkronkan dari profil)'),
+  "reminderLeadDays": zod.array(zod.number().min(updateNotificationPreferencesBodyReminderLeadDaysItemMin).max(updateNotificationPreferencesBodyReminderLeadDaysItemMax)).optional()
+})
+
+export const UpdateNotificationPreferencesResponse = zod.object({
+  "enabled": zod.boolean().describe('Sakelar utama pengingat tenggat'),
+  "inAppEnabled": zod.boolean().describe('Kirim notifikasi di dalam aplikasi'),
+  "emailEnabled": zod.boolean().describe('Kirim pengingat via email (bila email tersedia)'),
+  "email": zod.string().nullable().describe('Alamat email konsultan tujuan pengingat, disinkronkan dari profil akun. Null bila belum tersinkron; pengiriman email dilewati bila null.'),
+  "reminderLeadDays": zod.array(zod.number()).describe('Ambang tenggang hari pengingat, mis. [7, 3, 1]')
+})
+
+
+/**
  * Mengembalikan paket aktif, batas perusahaan, dan saldo kredit pendampingan AI (jatah bulanan + saldo beli) milik konsultan saat ini.
  * @summary Ringkasan langganan dan kredit pendampingan AI
  */

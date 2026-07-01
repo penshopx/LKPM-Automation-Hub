@@ -46,6 +46,7 @@ import Asisten from "@/pages/asisten";
 import Mentor from "@/pages/mentor";
 import KonsultanOnline from "@/pages/konsultan-online";
 import Landing from "@/pages/landing";
+import Settings from "@/pages/settings";
 import Langganan from "@/pages/langganan";
 import LanggananSukses from "@/pages/langganan-sukses";
 import { HelpdeskWidget } from "@/components/helpdesk-widget";
@@ -219,6 +220,7 @@ function AuthenticatedApp() {
         <Route path="/print-checklist" component={PrintChecklist} />
         <Route path="/calendar" component={Calendar} />
         <Route path="/data-quality" component={DataQuality} />
+        <Route path="/pengaturan" component={Settings} />
         <Route path="/langganan/sukses" component={LanggananSukses} />
         <Route path="/langganan" component={Langganan} />
         <Route component={NotFound} />
