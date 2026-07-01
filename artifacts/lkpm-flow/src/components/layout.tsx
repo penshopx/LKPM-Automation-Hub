@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Building2, FileText, Calendar as CalendarIcon, ShieldAlert, ClipboardList, FileSpreadsheet, BookOpen, MessageSquareText, Printer, Workflow, Map, Database, BookMarked, Clapperboard, Scale, Sparkles, GraduationCap, Headset, CreditCard, LogOut } from "lucide-react";
+import { LayoutDashboard, Building2, FileText, Calendar as CalendarIcon, ShieldAlert, ClipboardList, FileSpreadsheet, BookOpen, MessageSquareText, Printer, Workflow, Map, Database, BookMarked, Clapperboard, Scale, Sparkles, GraduationCap, Headset, CreditCard, LogOut, ChevronDown } from "lucide-react";
 import { useUser, useClerk } from "@clerk/react";
 import { useRole } from "@/lib/role";
 
@@ -43,36 +43,86 @@ function ConsultantFooter() {
   );
 }
 
+type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }> };
+type NavGroup = { label: string; items: NavItem[] };
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const role = useRole();
 
-  const navItems = [
-    { href: "/", label: "Dasbor", icon: LayoutDashboard },
+  const navGroups: NavGroup[] = [
     {
-      href: "/companies",
-      label: role === "perusahaan" ? "Perusahaan Saya" : "Perusahaan",
-      icon: Building2,
+      label: "Utama",
+      items: [
+        { href: "/", label: "Dasbor", icon: LayoutDashboard },
+        {
+          href: "/companies",
+          label: role === "perusahaan" ? "Perusahaan Saya" : "Perusahaan",
+          icon: Building2,
+        },
+        { href: "/reports", label: "Laporan LKPM", icon: FileText },
+        { href: "/calendar", label: "Kalender", icon: CalendarIcon },
+        { href: "/data-quality", label: "Kualitas Data", icon: ShieldAlert },
+      ],
     },
-    { href: "/reports", label: "Laporan LKPM", icon: FileText },
-    { href: "/konsultan-online", label: "Konsultan Online", icon: Headset },
-    { href: "/asisten", label: "Asisten Penyusun", icon: Sparkles },
-    { href: "/mentor", label: "Mentor LKPM", icon: GraduationCap },
-    { href: "/template-intake", label: "Template Intake", icon: ClipboardList },
-    { href: "/oss-field-guide", label: "Panduan Field OSS", icon: FileSpreadsheet },
-    { href: "/glossary-faq", label: "Glosarium & FAQ", icon: BookOpen },
-    { href: "/narrative-templates", label: "Template Narasi", icon: MessageSquareText },
-    { href: "/print-checklist", label: "Checklist Cetak", icon: Printer },
-    { href: "/calendar", label: "Kalender", icon: CalendarIcon },
-    { href: "/data-quality", label: "Kualitas Data", icon: ShieldAlert },
-    { href: "/langganan", label: "Langganan & Kredit", icon: CreditCard },
-    { href: "/blueprint", label: "Blueprint & Arsitektur", icon: Workflow },
-    { href: "/sop-data", label: "SOP Data", icon: Database },
-    { href: "/agent-playbook", label: "Playbook Agen", icon: BookMarked },
-    { href: "/case-studies", label: "Studi Kasus", icon: Clapperboard },
-    { href: "/regulation", label: "Regulasi & Sanksi", icon: Scale },
-    { href: "/index-map", label: "Peta Dokumen", icon: Map },
+    {
+      label: "Dokumen & Asisten",
+      items: [
+        { href: "/asisten", label: "Asisten Penyusun", icon: Sparkles },
+        { href: "/template-intake", label: "Template Intake", icon: ClipboardList },
+        { href: "/narrative-templates", label: "Template Narasi", icon: MessageSquareText },
+        { href: "/print-checklist", label: "Checklist Cetak", icon: Printer },
+        { href: "/index-map", label: "Peta Dokumen", icon: Map },
+      ],
+    },
+    {
+      label: "Bantuan & Edukasi",
+      items: [
+        { href: "/konsultan-online", label: "Konsultan Online", icon: Headset },
+        { href: "/mentor", label: "Mentor LKPM", icon: GraduationCap },
+        { href: "/oss-field-guide", label: "Panduan Field OSS", icon: FileSpreadsheet },
+        { href: "/glossary-faq", label: "Glosarium & FAQ", icon: BookOpen },
+        { href: "/regulation", label: "Regulasi & Sanksi", icon: Scale },
+        { href: "/case-studies", label: "Studi Kasus", icon: Clapperboard },
+      ],
+    },
+    {
+      label: "Referensi & Operasional",
+      items: [
+        { href: "/sop-data", label: "SOP Data", icon: Database },
+        { href: "/agent-playbook", label: "Playbook Agen", icon: BookMarked },
+        { href: "/blueprint", label: "Blueprint & Arsitektur", icon: Workflow },
+      ],
+    },
+    {
+      label: "Akun",
+      items: [
+        { href: "/langganan", label: "Langganan & Kredit", icon: CreditCard },
+      ],
+    },
   ];
+
+  const isItemActive = (href: string) =>
+    location === href || (href !== "/" && location.startsWith(href));
+
+  const activeGroupLabel = navGroups.find((g) => g.items.some((i) => isItemActive(i.href)))?.label;
+
+  const [openGroups, setOpenGroups] = React.useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const g of navGroups) {
+      initial[g.label] = g.label === "Utama" || g.label === activeGroupLabel;
+    }
+    return initial;
+  });
+
+  React.useEffect(() => {
+    if (activeGroupLabel) {
+      setOpenGroups((prev) => (prev[activeGroupLabel] ? prev : { ...prev, [activeGroupLabel]: true }));
+    }
+  }, [activeGroupLabel]);
+
+  const toggleGroup = (label: string) =>
+    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
 
   return (
     <div className="flex min-h-screen w-full flex-col md:flex-row bg-background">
@@ -83,23 +133,43 @@ export function Layout({ children }: { children: React.ReactNode }) {
             LKPM-Flow
           </h1>
         </div>
-        <nav className="flex-1 p-2 space-y-1">
-          {navItems.map((item) => {
-            const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
-            const Icon = item.icon;
+        <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+          {navGroups.map((group) => {
+            const isOpen = openGroups[group.label] ?? false;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive 
-                    ? "bg-primary/10 text-primary font-medium" 
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
+              <div key={group.label} className="pb-1">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.label)}
+                  className="flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  aria-expanded={isOpen}
+                >
+                  {group.label}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                </button>
+                {isOpen && (
+                  <div className="mt-1 space-y-1">
+                    {group.items.map((item) => {
+                      const isActive = isItemActive(item.href);
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                            isActive
+                              ? "bg-primary/10 text-primary font-medium"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          }`}
+                        >
+                          <Icon className="h-4 w-4" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
