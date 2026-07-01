@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { FlaggedDataPoint } from './flaggedDataPoint';
+import type { FlaggedIzinPermits } from './flaggedIzinPermits';
 
 export interface DataQuality {
   verifiedCount: number;
@@ -15,4 +16,9 @@ export interface DataQuality {
   /** Data points with confidence below 70 */
   lowConfidenceCount: number;
   flagged: FlaggedDataPoint[];
+  /** Izin dengan perizinan dasar belum lengkap (ada status selain terbit) */
+  incompletePermitCount: number;
+  /** Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku */
+  expiredPermitCount: number;
+  permitFlags: FlaggedIzinPermits[];
 }

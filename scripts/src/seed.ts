@@ -3,6 +3,7 @@ import {
   pool,
   companiesTable,
   izinTable,
+  basisPermitsTable,
   reportsTable,
   dataPointsTable,
   constraintsTable,
@@ -23,6 +24,7 @@ async function seed() {
   await db.delete(constraintsTable);
   await db.delete(dataPointsTable);
   await db.delete(reportsTable);
+  await db.delete(basisPermitsTable);
   await db.delete(izinTable);
   await db.delete(companiesTable);
 
@@ -96,6 +98,7 @@ async function seed() {
         idIzin: "91234567890123",
         kbli: "10110",
         scale: "besar",
+        riskLevel: "tinggi",
         projectName: "Pabrik Tepung Ikan Bekasi",
         projectLocation: "Kawasan Industri MM2100, Bekasi, Jawa Barat",
       },
@@ -104,6 +107,7 @@ async function seed() {
         idIzin: "91234567890999",
         kbli: "10130",
         scale: "besar",
+        riskLevel: "menengah_tinggi",
         projectName: "Lini Pengolahan Daging Olahan",
         projectLocation: "Kawasan Industri MM2100, Bekasi, Jawa Barat",
       },
@@ -112,6 +116,7 @@ async function seed() {
         idIzin: "92345678901234",
         kbli: "49431",
         scale: "menengah",
+        riskLevel: "menengah_rendah",
         projectName: "Gudang Distribusi Cibitung",
         projectLocation: "Jl. Raya Bogor KM 24, Jakarta Timur",
       },
@@ -120,6 +125,7 @@ async function seed() {
         idIzin: "93456789012345",
         kbli: "13134",
         scale: "kecil",
+        riskLevel: "rendah",
         projectName: "Unit Tenun Cigondewah",
         projectLocation: "Jl. Cigondewah Raya No. 88, Bandung",
       },
@@ -128,13 +134,104 @@ async function seed() {
         idIzin: "94567890123456",
         kbli: "01111",
         scale: "menengah",
+        riskLevel: "menengah_tinggi",
         projectName: "Kebun Padi Digital Sidoarjo",
         projectLocation: "Jl. Diponegoro No. 45, Surabaya, Jawa Timur",
       },
     ])
     .returning();
 
-  const [izSinar, , izBumi, izMekar, izTani] = izinRows;
+  const [izSinar, izSinar2, izBumi, izMekar, izTani] = izinRows;
+
+  console.log("Menambahkan perizinan dasar...");
+  await db.insert(basisPermitsTable).values([
+    // Izin risiko tinggi — lengkap
+    {
+      izinId: izSinar.id,
+      type: "kkpr",
+      documentNumber: "PKKPR-2024-000123",
+      issuedDate: "2024-03-12",
+      status: "terbit",
+      notes: "PKKPR untuk kawasan industri.",
+    },
+    {
+      izinId: izSinar.id,
+      type: "persetujuan_lingkungan",
+      documentNumber: "AMDAL-2024-045",
+      issuedDate: "2024-05-20",
+      status: "terbit",
+      notes: "AMDAL — kegiatan wajib AMDAL.",
+    },
+    {
+      izinId: izSinar.id,
+      type: "pbg",
+      documentNumber: "PBG-BKS-2024-889",
+      issuedDate: "2024-06-01",
+      status: "terbit",
+    },
+    {
+      izinId: izSinar.id,
+      type: "slf",
+      status: "dalam_proses",
+      notes: "Menunggu pemeriksaan kelaikan fungsi bangunan.",
+    },
+    // Izin menengah-tinggi — ada yang kedaluwarsa
+    {
+      izinId: izSinar2.id,
+      type: "kkpr",
+      documentNumber: "PKKPR-2022-000987",
+      issuedDate: "2022-01-10",
+      validUntil: "2025-01-10",
+      status: "kedaluwarsa",
+      notes: "Perlu perpanjangan PKKPR.",
+    },
+    {
+      izinId: izSinar2.id,
+      type: "persetujuan_lingkungan",
+      documentNumber: "UKL-UPL-2023-210",
+      issuedDate: "2023-08-15",
+      status: "terbit",
+      notes: "UKL-UPL.",
+    },
+    // Izin menengah-rendah — belum lengkap
+    {
+      izinId: izBumi.id,
+      type: "persetujuan_lingkungan",
+      status: "belum_ada",
+      notes: "SPPL belum disusun.",
+    },
+    {
+      izinId: izBumi.id,
+      type: "sertifikat_standar",
+      documentNumber: "SS-2024-3321",
+      issuedDate: "2024-02-28",
+      status: "terbit",
+    },
+    // Izin risiko rendah — cukup SPPL, sudah terbit
+    {
+      izinId: izMekar.id,
+      type: "persetujuan_lingkungan",
+      documentNumber: "SPPL-2024-1188",
+      issuedDate: "2024-04-04",
+      status: "terbit",
+      notes: "SPPL — risiko rendah.",
+    },
+    // Izin tani — sebagian dalam proses & masa berlaku dekat
+    {
+      izinId: izTani.id,
+      type: "kkpr",
+      documentNumber: "PKKPR-2024-777",
+      issuedDate: "2024-07-01",
+      validUntil: "2027-07-01",
+      status: "terbit",
+    },
+    {
+      izinId: izTani.id,
+      type: "persetujuan_lingkungan",
+      status: "dalam_proses",
+      notes: "UKL-UPL sedang diajukan.",
+    },
+  ]);
 
   console.log("Menambahkan laporan...");
   const reports = await db

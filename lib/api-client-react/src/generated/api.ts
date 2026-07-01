@@ -26,6 +26,9 @@ import type {
   AnthropicConversationInput,
   AnthropicConversationWithMessages,
   AnthropicMessageInput,
+  BasisPermit,
+  BasisPermitInput,
+  BasisPermitUpdate,
   BillingCheckoutInput,
   BillingCheckoutResult,
   BillingPlan,
@@ -906,6 +909,295 @@ export const useDeleteIzin = <TError = ErrorType<Error>,
         TContext
       > => {
       return useMutation(getDeleteIzinMutationOptions(options));
+    }
+
+export const getListBasisPermitsUrl = (izinId: number,) => {
+
+
+
+
+  return `/api/izin/${izinId}/basis-permits`
+}
+
+/**
+ * @summary List basis permits (perizinan dasar) for an izin
+ */
+export const listBasisPermits = async (izinId: number, options?: RequestInit): Promise<BasisPermit[]> => {
+
+  return customFetch<BasisPermit[]>(getListBasisPermitsUrl(izinId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListBasisPermitsQueryKey = (izinId: number,) => {
+    return [
+    `/api/izin/${izinId}/basis-permits`
+    ] as const;
+    }
+
+
+export const getListBasisPermitsQueryOptions = <TData = Awaited<ReturnType<typeof listBasisPermits>>, TError = ErrorType<Error>>(izinId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listBasisPermits>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListBasisPermitsQueryKey(izinId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listBasisPermits>>> = ({ signal }) => listBasisPermits(izinId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: izinId !== null && izinId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listBasisPermits>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListBasisPermitsQueryResult = NonNullable<Awaited<ReturnType<typeof listBasisPermits>>>
+export type ListBasisPermitsQueryError = ErrorType<Error>
+
+
+/**
+ * @summary List basis permits (perizinan dasar) for an izin
+ */
+
+export function useListBasisPermits<TData = Awaited<ReturnType<typeof listBasisPermits>>, TError = ErrorType<Error>>(
+ izinId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listBasisPermits>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListBasisPermitsQueryOptions(izinId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateBasisPermitUrl = (izinId: number,) => {
+
+
+
+
+  return `/api/izin/${izinId}/basis-permits`
+}
+
+/**
+ * @summary Add a basis permit to an izin
+ */
+export const createBasisPermit = async (izinId: number,
+    basisPermitInput: BasisPermitInput, options?: RequestInit): Promise<BasisPermit> => {
+
+  return customFetch<BasisPermit>(getCreateBasisPermitUrl(izinId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(basisPermitInput)
+  }
+);}
+
+
+
+
+export const getCreateBasisPermitMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBasisPermit>>, TError,{izinId: number;data: BodyType<BasisPermitInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createBasisPermit>>, TError,{izinId: number;data: BodyType<BasisPermitInput>}, TContext> => {
+
+const mutationKey = ['createBasisPermit'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createBasisPermit>>, {izinId: number;data: BodyType<BasisPermitInput>}> = (props) => {
+          const {izinId,data} = props ?? {};
+
+          return  createBasisPermit(izinId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateBasisPermitMutationResult = NonNullable<Awaited<ReturnType<typeof createBasisPermit>>>
+    export type CreateBasisPermitMutationBody = BodyType<BasisPermitInput>
+    export type CreateBasisPermitMutationError = ErrorType<Error>
+
+    /**
+ * @summary Add a basis permit to an izin
+ */
+export const useCreateBasisPermit = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBasisPermit>>, TError,{izinId: number;data: BodyType<BasisPermitInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createBasisPermit>>,
+        TError,
+        {izinId: number;data: BodyType<BasisPermitInput>},
+        TContext
+      > => {
+      return useMutation(getCreateBasisPermitMutationOptions(options));
+    }
+
+export const getUpdateBasisPermitUrl = (id: number,) => {
+
+
+
+
+  return `/api/basis-permits/${id}`
+}
+
+/**
+ * @summary Update a basis permit
+ */
+export const updateBasisPermit = async (id: number,
+    basisPermitUpdate: BasisPermitUpdate, options?: RequestInit): Promise<BasisPermit> => {
+
+  return customFetch<BasisPermit>(getUpdateBasisPermitUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(basisPermitUpdate)
+  }
+);}
+
+
+
+
+export const getUpdateBasisPermitMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateBasisPermit>>, TError,{id: number;data: BodyType<BasisPermitUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateBasisPermit>>, TError,{id: number;data: BodyType<BasisPermitUpdate>}, TContext> => {
+
+const mutationKey = ['updateBasisPermit'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateBasisPermit>>, {id: number;data: BodyType<BasisPermitUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateBasisPermit(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateBasisPermitMutationResult = NonNullable<Awaited<ReturnType<typeof updateBasisPermit>>>
+    export type UpdateBasisPermitMutationBody = BodyType<BasisPermitUpdate>
+    export type UpdateBasisPermitMutationError = ErrorType<Error>
+
+    /**
+ * @summary Update a basis permit
+ */
+export const useUpdateBasisPermit = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateBasisPermit>>, TError,{id: number;data: BodyType<BasisPermitUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateBasisPermit>>,
+        TError,
+        {id: number;data: BodyType<BasisPermitUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateBasisPermitMutationOptions(options));
+    }
+
+export const getDeleteBasisPermitUrl = (id: number,) => {
+
+
+
+
+  return `/api/basis-permits/${id}`
+}
+
+/**
+ * @summary Delete a basis permit
+ */
+export const deleteBasisPermit = async (id: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteBasisPermitUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteBasisPermitMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteBasisPermit>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteBasisPermit>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteBasisPermit'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteBasisPermit>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteBasisPermit(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteBasisPermitMutationResult = NonNullable<Awaited<ReturnType<typeof deleteBasisPermit>>>
+
+    export type DeleteBasisPermitMutationError = ErrorType<Error>
+
+    /**
+ * @summary Delete a basis permit
+ */
+export const useDeleteBasisPermit = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteBasisPermit>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteBasisPermit>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteBasisPermitMutationOptions(options));
     }
 
 export const getListReportsUrl = (params?: ListReportsParams,) => {

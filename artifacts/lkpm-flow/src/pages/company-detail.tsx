@@ -5,6 +5,7 @@ import {
   useListIzin, getListIzinQueryKey,
   useCreateIzin,
   type BusinessScale,
+  type RiskLevel,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +22,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Building2, MapPin, Hash, Briefcase, ChevronRight, ShieldCheck, Plus, FileText } from "lucide-react";
-import { scaleLabels, operatingModeLabels, permitTypeLabels, ssStatusLabels, labelOf } from "@/lib/labels";
+import { scaleLabels, operatingModeLabels, permitTypeLabels, ssStatusLabels, riskLevelLabels, labelOf } from "@/lib/labels";
 import { useToast } from "@/hooks/use-toast";
 
 function NewIzinDialog({ companyId, defaultScale }: { companyId: number; defaultScale: BusinessScale }) {
@@ -33,6 +34,7 @@ function NewIzinDialog({ companyId, defaultScale }: { companyId: number; default
   const [idIzin, setIdIzin] = React.useState("");
   const [kbli, setKbli] = React.useState("");
   const [scale, setScale] = React.useState<BusinessScale>(defaultScale);
+  const [riskLevel, setRiskLevel] = React.useState<RiskLevel | "">("");
   const [projectName, setProjectName] = React.useState("");
   const [projectLocation, setProjectLocation] = React.useState("");
 
@@ -53,6 +55,7 @@ function NewIzinDialog({ companyId, defaultScale }: { companyId: number; default
           idIzin: idIzin.trim(),
           kbli: kbli.trim() || undefined,
           scale,
+          riskLevel: riskLevel || undefined,
           projectName: projectName.trim() || undefined,
           projectLocation: projectLocation.trim() || undefined,
         },
@@ -64,6 +67,7 @@ function NewIzinDialog({ companyId, defaultScale }: { companyId: number; default
           setOpen(false);
           setIdIzin("");
           setKbli("");
+          setRiskLevel("");
           setProjectName("");
           setProjectLocation("");
         },
@@ -111,6 +115,19 @@ function NewIzinDialog({ companyId, defaultScale }: { companyId: number; default
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ni-risk">Tingkat Risiko</Label>
+              <Select value={riskLevel} onValueChange={(v) => setRiskLevel(v as RiskLevel)}>
+                <SelectTrigger id="ni-risk">
+                  <SelectValue placeholder="Opsional — pilih tingkat risiko" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(riskLevelLabels).map(([val, lbl]) => (
+                    <SelectItem key={val} value={val}>{lbl}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="ni-project">Nama Proyek</Label>
@@ -285,6 +302,7 @@ export default function CompanyDetail() {
                 <TableHead>Id Izin / Proyek</TableHead>
                 <TableHead>KBLI</TableHead>
                 <TableHead>Skala</TableHead>
+                <TableHead>Tingkat Risiko</TableHead>
                 <TableHead>Lokasi</TableHead>
               </TableRow>
             </TableHeader>
@@ -293,7 +311,7 @@ export default function CompanyDetail() {
                 <TableRow><TableCell colSpan={4} className="text-center py-8"><Skeleton className="h-4 w-24 mx-auto"/></TableCell></TableRow>
               ) : izinList?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center h-24 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                     Belum ada Izin. Tambah Izin untuk mulai membuat laporan.
                   </TableCell>
                 </TableRow>
@@ -311,6 +329,13 @@ export default function CompanyDetail() {
                     </TableCell>
                     <TableCell>{izin.kbli || "-"}</TableCell>
                     <TableCell><Badge variant="outline">{labelOf(scaleLabels, izin.scale)}</Badge></TableCell>
+                    <TableCell>
+                      {izin.riskLevel ? (
+                        <Badge variant="secondary">{labelOf(riskLevelLabels, izin.riskLevel)}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-muted-foreground">{izin.projectLocation || "-"}</TableCell>
                   </TableRow>
                 ))

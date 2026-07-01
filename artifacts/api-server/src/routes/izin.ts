@@ -4,8 +4,9 @@ import {
   izinTable,
   reportsTable,
   companiesTable,
+  basisPermitsTable,
 } from "@workspace/db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, asc } from "drizzle-orm";
 import {
   ListIzinParams,
   ListIzinResponse,
@@ -64,6 +65,7 @@ router.post("/companies/:companyId/izin", async (req, res) => {
       scale: body.scale,
       projectName: body.projectName ?? null,
       projectLocation: body.projectLocation ?? null,
+      riskLevel: body.riskLevel ?? null,
     })
     .returning();
   res.status(201).json(CreateIzinResponse.parse(serializeIzin(row)));
@@ -90,11 +92,18 @@ router.get("/izin/:id", async (req, res) => {
     res.status(404).json({ error: "Izin tidak ditemukan" });
     return;
   }
-  const reports = await db
-    .select()
-    .from(reportsTable)
-    .where(eq(reportsTable.izinId, id))
-    .orderBy(desc(reportsTable.deadline));
+  const [reports, basisPermits] = await Promise.all([
+    db
+      .select()
+      .from(reportsTable)
+      .where(eq(reportsTable.izinId, id))
+      .orderBy(desc(reportsTable.deadline)),
+    db
+      .select()
+      .from(basisPermitsTable)
+      .where(eq(basisPermitsTable.izinId, id))
+      .orderBy(asc(basisPermitsTable.id)),
+  ]);
   const payload = {
     izin: serializeIzin(row.izin),
     reports: reports.map((r) => ({
@@ -105,6 +114,7 @@ router.get("/izin/:id", async (req, res) => {
       projectName: row.izin.projectName,
       operatingMode: row.operatingMode,
     })),
+    basisPermits: basisPermits.map((p) => ({ ...p })),
   };
   GetIzinResponse.parse(payload);
   res.json(payload);
@@ -128,6 +138,7 @@ router.patch("/izin/:id", async (req, res) => {
       ...(body.projectLocation !== undefined && {
         projectLocation: body.projectLocation,
       }),
+      ...(body.riskLevel !== undefined && { riskLevel: body.riskLevel }),
     })
     .where(eq(izinTable.id, id))
     .returning();

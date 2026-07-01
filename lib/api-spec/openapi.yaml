@@ -20,6 +20,8 @@ tags:
     description: Business constraints (kendala) and follow-up narratives
   - name: activities
     description: Audit trail entries for reports
+  - name: basisPermits
+    description: Perizinan dasar OSS RBA (KKPR, Persetujuan Lingkungan, PBG, SLF, dll.) per Izin
   - name: dashboard
     description: Aggregated dashboards and compliance views
   - name: anthropic
@@ -268,6 +270,111 @@ paths:
       operationId: deleteIzin
       tags: [izin]
       summary: Delete an izin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /izin/{izinId}/basis-permits:
+    get:
+      operationId: listBasisPermits
+      tags: [basisPermits]
+      summary: List basis permits (perizinan dasar) for an izin
+      parameters:
+        - name: izinId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of basis permits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BasisPermit"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createBasisPermit
+      tags: [basisPermits]
+      summary: Add a basis permit to an izin
+      parameters:
+        - name: izinId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BasisPermitInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasisPermit"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /basis-permits/{id}:
+    patch:
+      operationId: updateBasisPermit
+      tags: [basisPermits]
+      summary: Update a basis permit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BasisPermitUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasisPermit"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteBasisPermit
+      tags: [basisPermits]
+      summary: Delete a basis permit
       parameters:
         - name: id
           in: path
@@ -1325,6 +1432,23 @@ components:
       enum: [terverifikasi, perlu_verifikasi, estimasi]
       description: Verification status of a data point
 
+    RiskLevel:
+      type: string
+      enum: [rendah, menengah_rendah, menengah_tinggi, tinggi]
+      description: Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi
+
+    BasisPermitType:
+      type: string
+      enum: [kkpr, persetujuan_lingkungan, pbg, slf, sertifikat_standar, izin]
+      description: >-
+        Jenis perizinan dasar OSS RBA — KKPR/PKKPR, Persetujuan Lingkungan
+        (AMDAL/UKL-UPL/SPPL), PBG, SLF, Sertifikat Standar, atau Izin
+
+    BasisPermitStatus:
+      type: string
+      enum: [belum_ada, dalam_proses, terbit, kedaluwarsa]
+      description: Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa
+
     Company:
       type: object
       required:
@@ -1593,6 +1717,11 @@ components:
           type: ["string", "null"]
         projectLocation:
           type: ["string", "null"]
+        riskLevel:
+          oneOf:
+            - $ref: "#/components/schemas/RiskLevel"
+            - type: "null"
+          description: Tingkat risiko usaha OSS RBA
         createdAt:
           type: string
           format: date-time
@@ -1613,6 +1742,8 @@ components:
           type: string
         projectLocation:
           type: string
+        riskLevel:
+          $ref: "#/components/schemas/RiskLevel"
     IzinUpdate:
       type: object
       properties:
@@ -1627,11 +1758,16 @@ components:
           type: string
         projectLocation:
           type: string
+        riskLevel:
+          oneOf:
+            - $ref: "#/components/schemas/RiskLevel"
+            - type: "null"
     IzinDetail:
       type: object
       required:
         - izin
         - reports
+        - basisPermits
       properties:
         izin:
           $ref: "#/components/schemas/Izin"
@@ -1639,6 +1775,80 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Report"
+        basisPermits:
+          type: array
+          items:
+            $ref: "#/components/schemas/BasisPermit"
+
+    BasisPermit:
+      type: object
+      required:
+        - id
+        - izinId
+        - type
+        - status
+        - createdAt
+      properties:
+        id:
+          type: integer
+        izinId:
+          type: integer
+        type:
+          $ref: "#/components/schemas/BasisPermitType"
+        documentNumber:
+          type: ["string", "null"]
+          description: Nomor dokumen perizinan
+        issuedDate:
+          type: ["string", "null"]
+          format: date
+          description: Tanggal terbit (YYYY-MM-DD)
+        validUntil:
+          type: ["string", "null"]
+          format: date
+          description: Tanggal berlaku sampai (YYYY-MM-DD)
+        status:
+          $ref: "#/components/schemas/BasisPermitStatus"
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+    BasisPermitInput:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: "#/components/schemas/BasisPermitType"
+        documentNumber:
+          type: string
+        issuedDate:
+          type: string
+          format: date
+        validUntil:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/BasisPermitStatus"
+        notes:
+          type: string
+    BasisPermitUpdate:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/BasisPermitType"
+        documentNumber:
+          type: ["string", "null"]
+        issuedDate:
+          type: ["string", "null"]
+          format: date
+        validUntil:
+          type: ["string", "null"]
+          format: date
+        status:
+          $ref: "#/components/schemas/BasisPermitStatus"
+        notes:
+          type: ["string", "null"]
 
     DataPoint:
       type: object
@@ -1956,6 +2166,40 @@ components:
           $ref: "#/components/schemas/DataStatus"
         confidence:
           type: integer
+
+    FlaggedIzinPermits:
+      type: object
+      required:
+        - izinId
+        - companyId
+        - companyName
+        - totalCount
+        - fulfilledCount
+        - incomplete
+        - expired
+      properties:
+        izinId:
+          type: integer
+        companyId:
+          type: integer
+        companyName:
+          type: string
+        idIzin:
+          type: string
+        projectName:
+          type: ["string", "null"]
+        totalCount:
+          type: integer
+          description: Jumlah perizinan dasar yang tercatat
+        fulfilledCount:
+          type: integer
+          description: Jumlah perizinan dasar berstatus terbit dan masih berlaku
+        incomplete:
+          type: boolean
+          description: Ada perizinan dasar yang belum berstatus terbit
+        expired:
+          type: boolean
+          description: Ada perizinan dasar kedaluwarsa atau melewati masa berlaku
     DataQuality:
       type: object
       required:
@@ -1965,6 +2209,9 @@ components:
         - missingSourceCount
         - lowConfidenceCount
         - flagged
+        - incompletePermitCount
+        - expiredPermitCount
+        - permitFlags
       properties:
         verifiedCount:
           type: integer
@@ -1981,3 +2228,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FlaggedDataPoint"
+        incompletePermitCount:
+          type: integer
+          description: Izin dengan perizinan dasar belum lengkap (ada status selain terbit)
+        expiredPermitCount:
+          type: integer
+          description: Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku
+        permitFlags:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlaggedIzinPermits"

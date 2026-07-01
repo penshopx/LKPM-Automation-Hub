@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { BusinessScale } from './businessScale';
+import type { RiskLevel } from './riskLevel';
 
 export interface Izin {
   id: number;
@@ -22,5 +23,7 @@ export interface Izin {
   projectName?: string | null;
   /** @nullable */
   projectLocation?: string | null;
+  /** Tingkat risiko usaha OSS RBA */
+  riskLevel?: RiskLevel | null;
   createdAt: Date;
 }

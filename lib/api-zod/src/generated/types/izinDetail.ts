@@ -5,10 +5,12 @@
  * LKPM-Flow API — companies, reports, data points, constraints, audit trail, and dashboards for LKPM (Laporan Kegiatan Penanaman Modal) reporting to OSS.
  * OpenAPI spec version: 0.1.0
  */
+import type { BasisPermit } from './basisPermit';
 import type { Izin } from './izin';
 import type { Report } from './report';
 
 export interface IzinDetail {
   izin: Izin;
   reports: Report[];
+  basisPermits: BasisPermit[];
 }

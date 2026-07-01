@@ -2,6 +2,7 @@ export * from "./users";
 export * from "./creditLedger";
 export * from "./companies";
 export * from "./izin";
+export * from "./basisPermits";
 export * from "./reports";
 export * from "./dataPoints";
 export * from "./constraints";

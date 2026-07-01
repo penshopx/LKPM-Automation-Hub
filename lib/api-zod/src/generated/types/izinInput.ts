@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { BusinessScale } from './businessScale';
+import type { RiskLevel } from './riskLevel';
 
 export interface IzinInput {
   /** @minLength 1 */
@@ -14,4 +15,5 @@ export interface IzinInput {
   scale: BusinessScale;
   projectName?: string;
   projectLocation?: string;
+  riskLevel?: RiskLevel;
 }

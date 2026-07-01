@@ -310,6 +310,47 @@ export const DataStatus = {
   estimasi: 'estimasi',
 } as const;
 
+/**
+ * Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi
+ */
+export type RiskLevel = typeof RiskLevel[keyof typeof RiskLevel];
+
+
+export const RiskLevel = {
+  rendah: 'rendah',
+  menengah_rendah: 'menengah_rendah',
+  menengah_tinggi: 'menengah_tinggi',
+  tinggi: 'tinggi',
+} as const;
+
+/**
+ * Jenis perizinan dasar OSS RBA — KKPR/PKKPR, Persetujuan Lingkungan (AMDAL/UKL-UPL/SPPL), PBG, SLF, Sertifikat Standar, atau Izin
+ */
+export type BasisPermitType = typeof BasisPermitType[keyof typeof BasisPermitType];
+
+
+export const BasisPermitType = {
+  kkpr: 'kkpr',
+  persetujuan_lingkungan: 'persetujuan_lingkungan',
+  pbg: 'pbg',
+  slf: 'slf',
+  sertifikat_standar: 'sertifikat_standar',
+  izin: 'izin',
+} as const;
+
+/**
+ * Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa
+ */
+export type BasisPermitStatus = typeof BasisPermitStatus[keyof typeof BasisPermitStatus];
+
+
+export const BasisPermitStatus = {
+  belum_ada: 'belum_ada',
+  dalam_proses: 'dalam_proses',
+  terbit: 'terbit',
+  kedaluwarsa: 'kedaluwarsa',
+} as const;
+
 export interface Company {
   id: number;
   name: string;
@@ -511,6 +552,8 @@ export interface Izin {
   projectName?: string | null;
   /** @nullable */
   projectLocation?: string | null;
+  /** Tingkat risiko usaha OSS RBA */
+  riskLevel?: RiskLevel | null;
   createdAt: string;
 }
 
@@ -521,6 +564,7 @@ export interface IzinInput {
   scale: BusinessScale;
   projectName?: string;
   projectLocation?: string;
+  riskLevel?: RiskLevel;
 }
 
 export interface IzinUpdate {
@@ -530,11 +574,60 @@ export interface IzinUpdate {
   scale?: BusinessScale;
   projectName?: string;
   projectLocation?: string;
+  riskLevel?: RiskLevel | null;
+}
+
+export interface BasisPermit {
+  id: number;
+  izinId: number;
+  type: BasisPermitType;
+  /**
+     * Nomor dokumen perizinan
+     * @nullable
+     */
+  documentNumber?: string | null;
+  /**
+     * Tanggal terbit (YYYY-MM-DD)
+     * @nullable
+     */
+  issuedDate?: string | null;
+  /**
+     * Tanggal berlaku sampai (YYYY-MM-DD)
+     * @nullable
+     */
+  validUntil?: string | null;
+  status: BasisPermitStatus;
+  /** @nullable */
+  notes?: string | null;
+  createdAt: string;
 }
 
 export interface IzinDetail {
   izin: Izin;
   reports: Report[];
+  basisPermits: BasisPermit[];
+}
+
+export interface BasisPermitInput {
+  type: BasisPermitType;
+  documentNumber?: string;
+  issuedDate?: string;
+  validUntil?: string;
+  status?: BasisPermitStatus;
+  notes?: string;
+}
+
+export interface BasisPermitUpdate {
+  type?: BasisPermitType;
+  /** @nullable */
+  documentNumber?: string | null;
+  /** @nullable */
+  issuedDate?: string | null;
+  /** @nullable */
+  validUntil?: string | null;
+  status?: BasisPermitStatus;
+  /** @nullable */
+  notes?: string | null;
 }
 
 export interface DataPointInput {
@@ -661,6 +754,23 @@ export interface FlaggedDataPoint {
   confidence: number;
 }
 
+export interface FlaggedIzinPermits {
+  izinId: number;
+  companyId: number;
+  companyName: string;
+  idIzin?: string;
+  /** @nullable */
+  projectName?: string | null;
+  /** Jumlah perizinan dasar yang tercatat */
+  totalCount: number;
+  /** Jumlah perizinan dasar berstatus terbit dan masih berlaku */
+  fulfilledCount: number;
+  /** Ada perizinan dasar yang belum berstatus terbit */
+  incomplete: boolean;
+  /** Ada perizinan dasar kedaluwarsa atau melewati masa berlaku */
+  expired: boolean;
+}
+
 export interface DataQuality {
   verifiedCount: number;
   needsVerificationCount: number;
@@ -669,6 +779,11 @@ export interface DataQuality {
   /** Data points with confidence below 70 */
   lowConfidenceCount: number;
   flagged: FlaggedDataPoint[];
+  /** Izin dengan perizinan dasar belum lengkap (ada status selain terbit) */
+  incompletePermitCount: number;
+  /** Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku */
+  expiredPermitCount: number;
+  permitFlags: FlaggedIzinPermits[];
 }
 
 export type ListCompaniesParams = {

@@ -5,6 +5,7 @@ import {
   reportsTable,
   dataPointsTable,
   constraintsTable,
+  basisPermitsTable,
 } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
 
@@ -35,6 +36,24 @@ export async function izinBelongsToConsultant(
     .where(
       and(
         eq(izinTable.id, izinId),
+        eq(companiesTable.consultantId, consultantId),
+      ),
+    );
+  return Boolean(row);
+}
+
+export async function basisPermitBelongsToConsultant(
+  basisPermitId: number,
+  consultantId: string,
+): Promise<boolean> {
+  const [row] = await db
+    .select({ id: basisPermitsTable.id })
+    .from(basisPermitsTable)
+    .innerJoin(izinTable, eq(basisPermitsTable.izinId, izinTable.id))
+    .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
+    .where(
+      and(
+        eq(basisPermitsTable.id, basisPermitId),
         eq(companiesTable.consultantId, consultantId),
       ),
     );

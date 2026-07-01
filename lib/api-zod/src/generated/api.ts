@@ -166,6 +166,7 @@ export const ListIzinResponseItem = zod.object({
   "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).describe('Investment scale determining reporting frequency'),
   "projectName": zod.string().nullish(),
   "projectLocation": zod.string().nullish(),
+  "riskLevel": zod.union([zod.enum(['rendah', 'menengah_rendah', 'menengah_tinggi', 'tinggi']).describe('Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi'),zod.null()]).optional().describe('Tingkat risiko usaha OSS RBA'),
   "createdAt": zod.coerce.date()
 })
 export const ListIzinResponse = zod.array(ListIzinResponseItem)
@@ -186,7 +187,8 @@ export const CreateIzinBody = zod.object({
   "kbli": zod.string().optional(),
   "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).describe('Investment scale determining reporting frequency'),
   "projectName": zod.string().optional(),
-  "projectLocation": zod.string().optional()
+  "projectLocation": zod.string().optional(),
+  "riskLevel": zod.enum(['rendah', 'menengah_rendah', 'menengah_tinggi', 'tinggi']).optional().describe('Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi')
 })
 
 export const CreateIzinResponse = zod.object({
@@ -197,6 +199,7 @@ export const CreateIzinResponse = zod.object({
   "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).describe('Investment scale determining reporting frequency'),
   "projectName": zod.string().nullish(),
   "projectLocation": zod.string().nullish(),
+  "riskLevel": zod.union([zod.enum(['rendah', 'menengah_rendah', 'menengah_tinggi', 'tinggi']).describe('Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi'),zod.null()]).optional().describe('Tingkat risiko usaha OSS RBA'),
   "createdAt": zod.coerce.date()
 })
 
@@ -217,6 +220,7 @@ export const GetIzinResponse = zod.object({
   "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).describe('Investment scale determining reporting frequency'),
   "projectName": zod.string().nullish(),
   "projectLocation": zod.string().nullish(),
+  "riskLevel": zod.union([zod.enum(['rendah', 'menengah_rendah', 'menengah_tinggi', 'tinggi']).describe('Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi'),zod.null()]).optional().describe('Tingkat risiko usaha OSS RBA'),
   "createdAt": zod.coerce.date()
 }),
   "reports": zod.array(zod.object({
@@ -239,6 +243,17 @@ export const GetIzinResponse = zod.object({
   "checkerName": zod.string().nullish(),
   "approverName": zod.string().nullish(),
   "createdAt": zod.coerce.date()
+})),
+  "basisPermits": zod.array(zod.object({
+  "id": zod.number(),
+  "izinId": zod.number(),
+  "type": zod.enum(['kkpr', 'persetujuan_lingkungan', 'pbg', 'slf', 'sertifikat_standar', 'izin']).describe('Jenis perizinan dasar OSS RBA — KKPR\/PKKPR, Persetujuan Lingkungan (AMDAL\/UKL-UPL\/SPPL), PBG, SLF, Sertifikat Standar, atau Izin'),
+  "documentNumber": zod.string().nullish().describe('Nomor dokumen perizinan'),
+  "issuedDate": zod.coerce.date().nullish().describe('Tanggal terbit (YYYY-MM-DD)'),
+  "validUntil": zod.coerce.date().nullish().describe('Tanggal berlaku sampai (YYYY-MM-DD)'),
+  "status": zod.enum(['belum_ada', 'dalam_proses', 'terbit', 'kedaluwarsa']).describe('Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa'),
+  "notes": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
 }))
 })
 
@@ -258,7 +273,8 @@ export const UpdateIzinBody = zod.object({
   "kbli": zod.string().optional(),
   "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).optional().describe('Investment scale determining reporting frequency'),
   "projectName": zod.string().optional(),
-  "projectLocation": zod.string().optional()
+  "projectLocation": zod.string().optional(),
+  "riskLevel": zod.union([zod.enum(['rendah', 'menengah_rendah', 'menengah_tinggi', 'tinggi']).describe('Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi'),zod.null()]).optional()
 })
 
 export const UpdateIzinResponse = zod.object({
@@ -269,6 +285,7 @@ export const UpdateIzinResponse = zod.object({
   "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).describe('Investment scale determining reporting frequency'),
   "projectName": zod.string().nullish(),
   "projectLocation": zod.string().nullish(),
+  "riskLevel": zod.union([zod.enum(['rendah', 'menengah_rendah', 'menengah_tinggi', 'tinggi']).describe('Tingkat risiko usaha OSS RBA — rendah, menengah-rendah, menengah-tinggi, tinggi'),zod.null()]).optional().describe('Tingkat risiko usaha OSS RBA'),
   "createdAt": zod.coerce.date()
 })
 
@@ -281,6 +298,95 @@ export const DeleteIzinParams = zod.object({
 })
 
 export const DeleteIzinResponse = zod.void()
+
+
+/**
+ * @summary List basis permits (perizinan dasar) for an izin
+ */
+export const ListBasisPermitsParams = zod.object({
+  "izinId": zod.coerce.number()
+})
+
+export const ListBasisPermitsResponseItem = zod.object({
+  "id": zod.number(),
+  "izinId": zod.number(),
+  "type": zod.enum(['kkpr', 'persetujuan_lingkungan', 'pbg', 'slf', 'sertifikat_standar', 'izin']).describe('Jenis perizinan dasar OSS RBA — KKPR\/PKKPR, Persetujuan Lingkungan (AMDAL\/UKL-UPL\/SPPL), PBG, SLF, Sertifikat Standar, atau Izin'),
+  "documentNumber": zod.string().nullish().describe('Nomor dokumen perizinan'),
+  "issuedDate": zod.coerce.date().nullish().describe('Tanggal terbit (YYYY-MM-DD)'),
+  "validUntil": zod.coerce.date().nullish().describe('Tanggal berlaku sampai (YYYY-MM-DD)'),
+  "status": zod.enum(['belum_ada', 'dalam_proses', 'terbit', 'kedaluwarsa']).describe('Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa'),
+  "notes": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+export const ListBasisPermitsResponse = zod.array(ListBasisPermitsResponseItem)
+
+
+/**
+ * @summary Add a basis permit to an izin
+ */
+export const CreateBasisPermitParams = zod.object({
+  "izinId": zod.coerce.number()
+})
+
+export const CreateBasisPermitBody = zod.object({
+  "type": zod.enum(['kkpr', 'persetujuan_lingkungan', 'pbg', 'slf', 'sertifikat_standar', 'izin']).describe('Jenis perizinan dasar OSS RBA — KKPR\/PKKPR, Persetujuan Lingkungan (AMDAL\/UKL-UPL\/SPPL), PBG, SLF, Sertifikat Standar, atau Izin'),
+  "documentNumber": zod.string().optional(),
+  "issuedDate": zod.coerce.date().optional(),
+  "validUntil": zod.coerce.date().optional(),
+  "status": zod.enum(['belum_ada', 'dalam_proses', 'terbit', 'kedaluwarsa']).optional().describe('Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa'),
+  "notes": zod.string().optional()
+})
+
+export const CreateBasisPermitResponse = zod.object({
+  "id": zod.number(),
+  "izinId": zod.number(),
+  "type": zod.enum(['kkpr', 'persetujuan_lingkungan', 'pbg', 'slf', 'sertifikat_standar', 'izin']).describe('Jenis perizinan dasar OSS RBA — KKPR\/PKKPR, Persetujuan Lingkungan (AMDAL\/UKL-UPL\/SPPL), PBG, SLF, Sertifikat Standar, atau Izin'),
+  "documentNumber": zod.string().nullish().describe('Nomor dokumen perizinan'),
+  "issuedDate": zod.coerce.date().nullish().describe('Tanggal terbit (YYYY-MM-DD)'),
+  "validUntil": zod.coerce.date().nullish().describe('Tanggal berlaku sampai (YYYY-MM-DD)'),
+  "status": zod.enum(['belum_ada', 'dalam_proses', 'terbit', 'kedaluwarsa']).describe('Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa'),
+  "notes": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Update a basis permit
+ */
+export const UpdateBasisPermitParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateBasisPermitBody = zod.object({
+  "type": zod.enum(['kkpr', 'persetujuan_lingkungan', 'pbg', 'slf', 'sertifikat_standar', 'izin']).optional().describe('Jenis perizinan dasar OSS RBA — KKPR\/PKKPR, Persetujuan Lingkungan (AMDAL\/UKL-UPL\/SPPL), PBG, SLF, Sertifikat Standar, atau Izin'),
+  "documentNumber": zod.string().nullish(),
+  "issuedDate": zod.coerce.date().nullish(),
+  "validUntil": zod.coerce.date().nullish(),
+  "status": zod.enum(['belum_ada', 'dalam_proses', 'terbit', 'kedaluwarsa']).optional().describe('Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa'),
+  "notes": zod.string().nullish()
+})
+
+export const UpdateBasisPermitResponse = zod.object({
+  "id": zod.number(),
+  "izinId": zod.number(),
+  "type": zod.enum(['kkpr', 'persetujuan_lingkungan', 'pbg', 'slf', 'sertifikat_standar', 'izin']).describe('Jenis perizinan dasar OSS RBA — KKPR\/PKKPR, Persetujuan Lingkungan (AMDAL\/UKL-UPL\/SPPL), PBG, SLF, Sertifikat Standar, atau Izin'),
+  "documentNumber": zod.string().nullish().describe('Nomor dokumen perizinan'),
+  "issuedDate": zod.coerce.date().nullish().describe('Tanggal terbit (YYYY-MM-DD)'),
+  "validUntil": zod.coerce.date().nullish().describe('Tanggal berlaku sampai (YYYY-MM-DD)'),
+  "status": zod.enum(['belum_ada', 'dalam_proses', 'terbit', 'kedaluwarsa']).describe('Status kelengkapan perizinan dasar — belum ada, dalam proses, terbit, atau kedaluwarsa'),
+  "notes": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Delete a basis permit
+ */
+export const DeleteBasisPermitParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteBasisPermitResponse = zod.void()
 
 
 /**
@@ -801,6 +907,19 @@ export const GetDataQualityResponse = zod.object({
   "source": zod.string().nullish(),
   "status": zod.enum(['terverifikasi', 'perlu_verifikasi', 'estimasi']).describe('Verification status of a data point'),
   "confidence": zod.number()
+})),
+  "incompletePermitCount": zod.number().describe('Izin dengan perizinan dasar belum lengkap (ada status selain terbit)'),
+  "expiredPermitCount": zod.number().describe('Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku'),
+  "permitFlags": zod.array(zod.object({
+  "izinId": zod.number(),
+  "companyId": zod.number(),
+  "companyName": zod.string(),
+  "idIzin": zod.string().optional(),
+  "projectName": zod.string().nullish(),
+  "totalCount": zod.number().describe('Jumlah perizinan dasar yang tercatat'),
+  "fulfilledCount": zod.number().describe('Jumlah perizinan dasar berstatus terbit dan masih berlaku'),
+  "incomplete": zod.boolean().describe('Ada perizinan dasar yang belum berstatus terbit'),
+  "expired": zod.boolean().describe('Ada perizinan dasar kedaluwarsa atau melewati masa berlaku')
 }))
 })
 

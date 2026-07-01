@@ -20,6 +20,7 @@ export const izinTable = pgTable(
     scale: text("scale").notNull(),
     projectName: text("project_name"),
     projectLocation: text("project_location"),
+    riskLevel: text("risk_level"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

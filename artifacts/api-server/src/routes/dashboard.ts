@@ -5,6 +5,7 @@ import {
   izinTable,
   companiesTable,
   dataPointsTable,
+  basisPermitsTable,
 } from "@workspace/db";
 import { and, eq, ne, sql } from "drizzle-orm";
 import {
@@ -194,6 +195,69 @@ router.get("/dashboard/data-quality", async (req, res) => {
     }
   }
 
+  const permitRows = await db
+    .select({
+      permit: basisPermitsTable,
+      izinId: izinTable.id,
+      idIzin: izinTable.idIzin,
+      projectName: izinTable.projectName,
+      companyId: companiesTable.id,
+      companyName: companiesTable.name,
+    })
+    .from(basisPermitsTable)
+    .innerJoin(izinTable, eq(basisPermitsTable.izinId, izinTable.id))
+    .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
+    .where(eq(companiesTable.consultantId, consultantId));
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  type PermitAgg = {
+    izinId: number;
+    companyId: number;
+    companyName: string;
+    idIzin: string;
+    projectName: string | null;
+    totalCount: number;
+    fulfilledCount: number;
+    incomplete: boolean;
+    expired: boolean;
+  };
+  const permitMap = new Map<number, PermitAgg>();
+
+  for (const r of permitRows) {
+    let agg = permitMap.get(r.izinId);
+    if (!agg) {
+      agg = {
+        izinId: r.izinId,
+        companyId: r.companyId,
+        companyName: r.companyName,
+        idIzin: r.idIzin,
+        projectName: r.projectName,
+        totalCount: 0,
+        fulfilledCount: 0,
+        incomplete: false,
+        expired: false,
+      };
+      permitMap.set(r.izinId, agg);
+    }
+    const p = r.permit;
+    agg.totalCount += 1;
+    const pastValidUntil =
+      p.validUntil !== null && new Date(p.validUntil) < today;
+    const isExpired = p.status === "kedaluwarsa" || pastValidUntil;
+    const isFulfilled = p.status === "terbit" && !pastValidUntil;
+    if (isFulfilled) agg.fulfilledCount += 1;
+    else agg.incomplete = true;
+    if (isExpired) agg.expired = true;
+  }
+
+  const permitFlags = Array.from(permitMap.values()).filter(
+    (a) => a.incomplete || a.expired,
+  );
+  const incompletePermitCount = permitFlags.filter((a) => a.incomplete).length;
+  const expiredPermitCount = permitFlags.filter((a) => a.expired).length;
+
   res.json(
     GetDataQualityResponse.parse({
       verifiedCount,
@@ -202,6 +266,9 @@ router.get("/dashboard/data-quality", async (req, res) => {
       missingSourceCount,
       lowConfidenceCount,
       flagged,
+      incompletePermitCount,
+      expiredPermitCount,
+      permitFlags,
     }),
   );
 });

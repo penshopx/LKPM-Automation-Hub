@@ -41,6 +41,29 @@ export const statusLabels: Record<string, string> = {
   archive: "Arsip",
 };
 
+export const riskLevelLabels: Record<string, string> = {
+  rendah: "Risiko Rendah",
+  menengah_rendah: "Menengah-Rendah",
+  menengah_tinggi: "Menengah-Tinggi",
+  tinggi: "Risiko Tinggi",
+};
+
+export const basisPermitTypeLabels: Record<string, string> = {
+  kkpr: "KKPR / PKKPR",
+  persetujuan_lingkungan: "Persetujuan Lingkungan",
+  pbg: "PBG",
+  slf: "SLF",
+  sertifikat_standar: "Sertifikat Standar",
+  izin: "Izin",
+};
+
+export const basisPermitStatusLabels: Record<string, string> = {
+  belum_ada: "Belum Ada",
+  dalam_proses: "Dalam Proses",
+  terbit: "Terbit",
+  kedaluwarsa: "Kedaluwarsa",
+};
+
 export function labelOf(map: Record<string, string>, key: string): string {
   return map[key] ?? key;
 }
