@@ -910,6 +910,7 @@ export const GetDataQualityResponse = zod.object({
 })),
   "incompletePermitCount": zod.number().describe('Izin dengan perizinan dasar belum lengkap (ada status selain terbit)'),
   "expiredPermitCount": zod.number().describe('Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku'),
+  "expiringSoonPermitCount": zod.number().describe('Izin dengan perizinan dasar yang akan kedaluwarsa dalam waktu dekat'),
   "permitFlags": zod.array(zod.object({
   "izinId": zod.number(),
   "companyId": zod.number(),
@@ -919,7 +920,9 @@ export const GetDataQualityResponse = zod.object({
   "totalCount": zod.number().describe('Jumlah perizinan dasar yang tercatat'),
   "fulfilledCount": zod.number().describe('Jumlah perizinan dasar berstatus terbit dan masih berlaku'),
   "incomplete": zod.boolean().describe('Ada perizinan dasar yang belum berstatus terbit'),
-  "expired": zod.boolean().describe('Ada perizinan dasar kedaluwarsa atau melewati masa berlaku')
+  "expired": zod.boolean().describe('Ada perizinan dasar kedaluwarsa atau melewati masa berlaku'),
+  "expiringSoon": zod.boolean().describe('Ada perizinan dasar yang akan kedaluwarsa dalam waktu dekat (belum melewati masa berlaku)'),
+  "daysUntilExpiry": zod.number().nullish().describe('Sisa hari menuju masa berlaku terdekat yang akan kedaluwarsa; null jika tidak ada')
 }))
 })
 

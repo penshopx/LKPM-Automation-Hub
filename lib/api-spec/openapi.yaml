@@ -2177,6 +2177,7 @@ components:
         - fulfilledCount
         - incomplete
         - expired
+        - expiringSoon
       properties:
         izinId:
           type: integer
@@ -2200,6 +2201,12 @@ components:
         expired:
           type: boolean
           description: Ada perizinan dasar kedaluwarsa atau melewati masa berlaku
+        expiringSoon:
+          type: boolean
+          description: Ada perizinan dasar yang akan kedaluwarsa dalam waktu dekat (belum melewati masa berlaku)
+        daysUntilExpiry:
+          type: ["integer", "null"]
+          description: Sisa hari menuju masa berlaku terdekat yang akan kedaluwarsa; null jika tidak ada
     DataQuality:
       type: object
       required:
@@ -2211,6 +2218,7 @@ components:
         - flagged
         - incompletePermitCount
         - expiredPermitCount
+        - expiringSoonPermitCount
         - permitFlags
       properties:
         verifiedCount:
@@ -2234,6 +2242,9 @@ components:
         expiredPermitCount:
           type: integer
           description: Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku
+        expiringSoonPermitCount:
+          type: integer
+          description: Izin dengan perizinan dasar yang akan kedaluwarsa dalam waktu dekat
         permitFlags:
           type: array
           items:

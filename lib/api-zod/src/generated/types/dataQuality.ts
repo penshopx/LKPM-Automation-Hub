@@ -20,5 +20,7 @@ export interface DataQuality {
   incompletePermitCount: number;
   /** Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku */
   expiredPermitCount: number;
+  /** Izin dengan perizinan dasar yang akan kedaluwarsa dalam waktu dekat */
+  expiringSoonPermitCount: number;
   permitFlags: FlaggedIzinPermits[];
 }

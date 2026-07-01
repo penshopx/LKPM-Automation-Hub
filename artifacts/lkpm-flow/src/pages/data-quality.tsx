@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, CheckCircle2, ShieldAlert, SearchX, ShieldX, FileWarning } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ShieldAlert, SearchX, ShieldX, FileWarning, CalendarClock } from "lucide-react";
 
 export default function DataQuality() {
   const { data: quality, isLoading } = useGetDataQuality({
@@ -75,7 +75,7 @@ export default function DataQuality() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className={quality?.incompletePermitCount ? "border-amber-300 shadow-sm" : ""}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Perizinan Dasar Belum Lengkap</CardTitle>
@@ -86,6 +86,19 @@ export default function DataQuality() {
               <div className="text-2xl font-bold">{quality?.incompletePermitCount || 0}</div>
             )}
             <p className="text-xs text-muted-foreground mt-1">Izin dengan syarat OSS RBA belum terbit</p>
+          </CardContent>
+        </Card>
+
+        <Card className={quality?.expiringSoonPermitCount ? "border-amber-300 shadow-sm" : ""}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Perizinan Dasar Akan Kedaluwarsa</CardTitle>
+            <CalendarClock className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? <Skeleton className="h-8 w-16" /> : (
+              <div className="text-2xl font-bold text-amber-600">{quality?.expiringSoonPermitCount || 0}</div>
+            )}
+            <p className="text-xs text-muted-foreground mt-1">Izin dengan masa berlaku ≤ 60 hari lagi</p>
           </CardContent>
         </Card>
 
@@ -115,7 +128,7 @@ export default function DataQuality() {
           </div>
           <h3 className="text-base font-semibold text-emerald-900 mb-1">Semua Perizinan Dasar Lengkap</h3>
           <p className="text-emerald-700/80 text-sm max-w-sm mx-auto">
-            Tidak ada Izin dengan perizinan dasar yang belum lengkap atau kedaluwarsa.
+            Tidak ada Izin dengan perizinan dasar yang belum lengkap, akan kedaluwarsa, atau kedaluwarsa.
           </p>
         </div>
       ) : (
@@ -149,6 +162,12 @@ export default function DataQuality() {
                     <div className="flex flex-wrap gap-1.5">
                       {flag.incomplete && (
                         <Badge variant="outline" className="text-[10px] border-amber-300 text-amber-700">Belum Lengkap</Badge>
+                      )}
+                      {flag.expiringSoon && (
+                        <Badge variant="outline" className="text-[10px] border-amber-400 bg-amber-50 text-amber-700">
+                          Akan Kedaluwarsa
+                          {typeof flag.daysUntilExpiry === "number" ? ` · H-${flag.daysUntilExpiry}` : ""}
+                        </Badge>
                       )}
                       {flag.expired && (
                         <Badge variant="destructive" className="text-[10px]">Kedaluwarsa</Badge>

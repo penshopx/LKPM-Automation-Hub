@@ -222,8 +222,9 @@ async function seed() {
       type: "kkpr",
       documentNumber: "PKKPR-2024-777",
       issuedDate: "2024-07-01",
-      validUntil: "2027-07-01",
+      validUntil: "2026-08-20",
       status: "terbit",
+      notes: "Masa berlaku PKKPR mendekati kedaluwarsa — perlu perpanjangan.",
     },
     {
       izinId: izTani.id,

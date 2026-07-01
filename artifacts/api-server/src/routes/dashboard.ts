@@ -19,6 +19,8 @@ const router: IRouter = Router();
 
 const SUBMITTED_STATUSES = ["submit", "monitor", "archive"];
 
+const PERMIT_EXPIRY_WARNING_DAYS = 60;
+
 function daysBetween(deadline: string): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -222,6 +224,8 @@ router.get("/dashboard/data-quality", async (req, res) => {
     fulfilledCount: number;
     incomplete: boolean;
     expired: boolean;
+    expiringSoon: boolean;
+    daysUntilExpiry: number | null;
   };
   const permitMap = new Map<number, PermitAgg>();
 
@@ -238,6 +242,8 @@ router.get("/dashboard/data-quality", async (req, res) => {
         fulfilledCount: 0,
         incomplete: false,
         expired: false,
+        expiringSoon: false,
+        daysUntilExpiry: null,
       };
       permitMap.set(r.izinId, agg);
     }
@@ -250,13 +256,26 @@ router.get("/dashboard/data-quality", async (req, res) => {
     if (isFulfilled) agg.fulfilledCount += 1;
     else agg.incomplete = true;
     if (isExpired) agg.expired = true;
+    if (!isExpired && p.validUntil !== null) {
+      const remaining = daysBetween(p.validUntil);
+      if (remaining >= 0 && remaining <= PERMIT_EXPIRY_WARNING_DAYS) {
+        agg.expiringSoon = true;
+        agg.daysUntilExpiry =
+          agg.daysUntilExpiry === null
+            ? remaining
+            : Math.min(agg.daysUntilExpiry, remaining);
+      }
+    }
   }
 
   const permitFlags = Array.from(permitMap.values()).filter(
-    (a) => a.incomplete || a.expired,
+    (a) => a.incomplete || a.expired || a.expiringSoon,
   );
   const incompletePermitCount = permitFlags.filter((a) => a.incomplete).length;
   const expiredPermitCount = permitFlags.filter((a) => a.expired).length;
+  const expiringSoonPermitCount = permitFlags.filter(
+    (a) => a.expiringSoon,
+  ).length;
 
   res.json(
     GetDataQualityResponse.parse({
@@ -268,6 +287,7 @@ router.get("/dashboard/data-quality", async (req, res) => {
       flagged,
       incompletePermitCount,
       expiredPermitCount,
+      expiringSoonPermitCount,
       permitFlags,
     }),
   );

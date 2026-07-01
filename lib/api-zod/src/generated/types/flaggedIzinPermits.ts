@@ -21,4 +21,11 @@ export interface FlaggedIzinPermits {
   incomplete: boolean;
   /** Ada perizinan dasar kedaluwarsa atau melewati masa berlaku */
   expired: boolean;
+  /** Ada perizinan dasar yang akan kedaluwarsa dalam waktu dekat (belum melewati masa berlaku) */
+  expiringSoon: boolean;
+  /**
+     * Sisa hari menuju masa berlaku terdekat yang akan kedaluwarsa; null jika tidak ada
+     * @nullable
+     */
+  daysUntilExpiry?: number | null;
 }

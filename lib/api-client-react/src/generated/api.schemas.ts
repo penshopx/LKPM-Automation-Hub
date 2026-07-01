@@ -769,6 +769,13 @@ export interface FlaggedIzinPermits {
   incomplete: boolean;
   /** Ada perizinan dasar kedaluwarsa atau melewati masa berlaku */
   expired: boolean;
+  /** Ada perizinan dasar yang akan kedaluwarsa dalam waktu dekat (belum melewati masa berlaku) */
+  expiringSoon: boolean;
+  /**
+     * Sisa hari menuju masa berlaku terdekat yang akan kedaluwarsa; null jika tidak ada
+     * @nullable
+     */
+  daysUntilExpiry?: number | null;
 }
 
 export interface DataQuality {
@@ -783,6 +790,8 @@ export interface DataQuality {
   incompletePermitCount: number;
   /** Izin dengan perizinan dasar kedaluwarsa atau melewati masa berlaku */
   expiredPermitCount: number;
+  /** Izin dengan perizinan dasar yang akan kedaluwarsa dalam waktu dekat */
+  expiringSoonPermitCount: number;
   permitFlags: FlaggedIzinPermits[];
 }
 
