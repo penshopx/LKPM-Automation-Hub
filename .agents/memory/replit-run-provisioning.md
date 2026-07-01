@@ -32,3 +32,12 @@ API = `PORT=8080 pnpm --filter @workspace/api-server run dev` (console); web nee
 **Why:** newly-added secrets only reach freshly-spawned processes; a stale
 workflow env snapshot won't see them (restart the workflow, or the whole repl if a
 restart still can't see them).
+
+**Secrets hygiene:** Clerk keys (`CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`,
+`VITE_CLERK_PUBLISHABLE_KEY`) belong in the encrypted Secrets store, never as
+`[userenv.shared]` plaintext in `.replit` (that file is committed to git, so
+forks/shares/publishes leak them). An earlier import had shipped them plaintext.
+`CLERK_PUBLISHABLE_KEY` (backend, read in `app.ts` via `publishableKeyFromHost`)
+must be the Clerk `pk_...` value — same as `VITE_CLERK_PUBLISHABLE_KEY` — NOT a
+Google `AIza...` key. A Google key had been mislabeled there; it is not consumed
+by the Gemini client (`ai.ts` only reads `AI_INTEGRATIONS_GEMINI_*` / `GEMINI_API_KEY`).
