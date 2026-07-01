@@ -59,4 +59,8 @@ externalPort = 80
 
 [deployment]
 deploymentTarget = "cloudrun"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
 # Replit config file - secrets removed
