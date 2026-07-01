@@ -7,6 +7,7 @@ export * from "./reports";
 export * from "./dataPoints";
 export * from "./constraints";
 export * from "./activities";
+export * from "./attachments";
 export * from "./conversations";
 export * from "./messages";
 export * from "./notifications";

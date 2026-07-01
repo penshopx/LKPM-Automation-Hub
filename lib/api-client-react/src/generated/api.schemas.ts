@@ -856,6 +856,56 @@ export interface DataQuality {
   permitFlags: FlaggedIzinPermits[];
 }
 
+export interface UploadUrlRequest {
+  /** @minLength 1 */
+  fileName: string;
+  /**
+     * File size in bytes
+     * @minimum 1
+     */
+  size: number;
+  /** @minLength 1 */
+  contentType: string;
+}
+
+export interface UploadUrlResponse {
+  /** Short-lived presigned PUT URL to upload the file to */
+  uploadURL: string;
+  /** Normalized "/objects/..." path to persist as the attachment reference */
+  objectPath: string;
+}
+
+export interface Attachment {
+  id: number;
+  /** @nullable */
+  reportId?: number | null;
+  /** @nullable */
+  izinId?: number | null;
+  /** @nullable */
+  basisPermitId?: number | null;
+  fileName: string;
+  contentType: string;
+  /** File size in bytes */
+  size: number;
+  /** Consultant/user who uploaded the file */
+  uploadedBy: string;
+  createdAt: string;
+}
+
+export interface AttachmentInput {
+  /** @minLength 1 */
+  fileName: string;
+  /** @minLength 1 */
+  contentType: string;
+  /** @minimum 1 */
+  size: number;
+  /**
+     * Normalized "/objects/..." path returned by /uploads/request-url
+     * @minLength 1
+     */
+  objectPath: string;
+}
+
 export type ListCompaniesParams = {
 scale?: BusinessScale;
 search?: string;

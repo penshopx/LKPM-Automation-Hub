@@ -6,6 +6,7 @@ import {
   dataPointsTable,
   constraintsTable,
   basisPermitsTable,
+  attachmentsTable,
 } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
 
@@ -114,4 +115,37 @@ export async function constraintBelongsToConsultant(
       ),
     );
   return Boolean(row);
+}
+
+/**
+ * Resolves an attachment to its owning consultant via whichever parent it is
+ * linked to (report → izin → company, izin → company, or basisPermit → izin →
+ * company). Returns the attachment row only when it belongs to the consultant,
+ * so callers can 404 on both missing and cross-tenant access without leaking
+ * existence.
+ */
+export async function getAttachmentForConsultant(
+  attachmentId: number,
+  consultantId: string,
+): Promise<typeof attachmentsTable.$inferSelect | null> {
+  const [row] = await db.select().from(attachmentsTable).where(
+    eq(attachmentsTable.id, attachmentId),
+  );
+  if (!row) return null;
+  if (row.reportId != null) {
+    return (await reportBelongsToConsultant(row.reportId, consultantId))
+      ? row
+      : null;
+  }
+  if (row.izinId != null) {
+    return (await izinBelongsToConsultant(row.izinId, consultantId))
+      ? row
+      : null;
+  }
+  if (row.basisPermitId != null) {
+    return (await basisPermitBelongsToConsultant(row.basisPermitId, consultantId))
+      ? row
+      : null;
+  }
+  return null;
 }

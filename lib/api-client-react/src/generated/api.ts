@@ -26,6 +26,8 @@ import type {
   AnthropicConversationInput,
   AnthropicConversationWithMessages,
   AnthropicMessageInput,
+  Attachment,
+  AttachmentInput,
   BasisPermit,
   BasisPermitInput,
   BasisPermitUpdate,
@@ -70,7 +72,9 @@ import type {
   ReportDraftInput,
   ReportInput,
   ReportUpdate,
-  SetRoleInput
+  SetRoleInput,
+  UploadUrlRequest,
+  UploadUrlResponse
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -1203,6 +1207,591 @@ export const useDeleteBasisPermit = <TError = ErrorType<Error>,
         TContext
       > => {
       return useMutation(getDeleteBasisPermitMutationOptions(options));
+    }
+
+export const getRequestUploadUrlUrl = () => {
+
+
+
+
+  return `/api/uploads/request-url`
+}
+
+/**
+ * Validates file type and size, then returns a short-lived presigned PUT URL and the normalized object path. The client uploads the file directly to the URL; no file bytes pass through this API.
+ * @summary Request a presigned URL to upload a file to private object storage
+ */
+export const requestUploadUrl = async (uploadUrlRequest: UploadUrlRequest, options?: RequestInit): Promise<UploadUrlResponse> => {
+
+  return customFetch<UploadUrlResponse>(getRequestUploadUrlUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(uploadUrlRequest)
+  }
+);}
+
+
+
+
+export const getRequestUploadUrlMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestUploadUrl>>, TError,{data: BodyType<UploadUrlRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof requestUploadUrl>>, TError,{data: BodyType<UploadUrlRequest>}, TContext> => {
+
+const mutationKey = ['requestUploadUrl'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof requestUploadUrl>>, {data: BodyType<UploadUrlRequest>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  requestUploadUrl(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RequestUploadUrlMutationResult = NonNullable<Awaited<ReturnType<typeof requestUploadUrl>>>
+    export type RequestUploadUrlMutationBody = BodyType<UploadUrlRequest>
+    export type RequestUploadUrlMutationError = ErrorType<Error>
+
+    /**
+ * @summary Request a presigned URL to upload a file to private object storage
+ */
+export const useRequestUploadUrl = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestUploadUrl>>, TError,{data: BodyType<UploadUrlRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof requestUploadUrl>>,
+        TError,
+        {data: BodyType<UploadUrlRequest>},
+        TContext
+      > => {
+      return useMutation(getRequestUploadUrlMutationOptions(options));
+    }
+
+export const getListReportAttachmentsUrl = (reportId: number,) => {
+
+
+
+
+  return `/api/reports/${reportId}/attachments`
+}
+
+/**
+ * @summary List attachments for a report
+ */
+export const listReportAttachments = async (reportId: number, options?: RequestInit): Promise<Attachment[]> => {
+
+  return customFetch<Attachment[]>(getListReportAttachmentsUrl(reportId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListReportAttachmentsQueryKey = (reportId: number,) => {
+    return [
+    `/api/reports/${reportId}/attachments`
+    ] as const;
+    }
+
+
+export const getListReportAttachmentsQueryOptions = <TData = Awaited<ReturnType<typeof listReportAttachments>>, TError = ErrorType<Error>>(reportId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listReportAttachments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListReportAttachmentsQueryKey(reportId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listReportAttachments>>> = ({ signal }) => listReportAttachments(reportId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: reportId !== null && reportId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listReportAttachments>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListReportAttachmentsQueryResult = NonNullable<Awaited<ReturnType<typeof listReportAttachments>>>
+export type ListReportAttachmentsQueryError = ErrorType<Error>
+
+
+/**
+ * @summary List attachments for a report
+ */
+
+export function useListReportAttachments<TData = Awaited<ReturnType<typeof listReportAttachments>>, TError = ErrorType<Error>>(
+ reportId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listReportAttachments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListReportAttachmentsQueryOptions(reportId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateReportAttachmentUrl = (reportId: number,) => {
+
+
+
+
+  return `/api/reports/${reportId}/attachments`
+}
+
+/**
+ * @summary Register an uploaded attachment against a report
+ */
+export const createReportAttachment = async (reportId: number,
+    attachmentInput: AttachmentInput, options?: RequestInit): Promise<Attachment> => {
+
+  return customFetch<Attachment>(getCreateReportAttachmentUrl(reportId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(attachmentInput)
+  }
+);}
+
+
+
+
+export const getCreateReportAttachmentMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReportAttachment>>, TError,{reportId: number;data: BodyType<AttachmentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createReportAttachment>>, TError,{reportId: number;data: BodyType<AttachmentInput>}, TContext> => {
+
+const mutationKey = ['createReportAttachment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createReportAttachment>>, {reportId: number;data: BodyType<AttachmentInput>}> = (props) => {
+          const {reportId,data} = props ?? {};
+
+          return  createReportAttachment(reportId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateReportAttachmentMutationResult = NonNullable<Awaited<ReturnType<typeof createReportAttachment>>>
+    export type CreateReportAttachmentMutationBody = BodyType<AttachmentInput>
+    export type CreateReportAttachmentMutationError = ErrorType<Error>
+
+    /**
+ * @summary Register an uploaded attachment against a report
+ */
+export const useCreateReportAttachment = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReportAttachment>>, TError,{reportId: number;data: BodyType<AttachmentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createReportAttachment>>,
+        TError,
+        {reportId: number;data: BodyType<AttachmentInput>},
+        TContext
+      > => {
+      return useMutation(getCreateReportAttachmentMutationOptions(options));
+    }
+
+export const getListIzinAttachmentsUrl = (izinId: number,) => {
+
+
+
+
+  return `/api/izin/${izinId}/attachments`
+}
+
+/**
+ * @summary List attachments for an izin
+ */
+export const listIzinAttachments = async (izinId: number, options?: RequestInit): Promise<Attachment[]> => {
+
+  return customFetch<Attachment[]>(getListIzinAttachmentsUrl(izinId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListIzinAttachmentsQueryKey = (izinId: number,) => {
+    return [
+    `/api/izin/${izinId}/attachments`
+    ] as const;
+    }
+
+
+export const getListIzinAttachmentsQueryOptions = <TData = Awaited<ReturnType<typeof listIzinAttachments>>, TError = ErrorType<Error>>(izinId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listIzinAttachments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListIzinAttachmentsQueryKey(izinId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listIzinAttachments>>> = ({ signal }) => listIzinAttachments(izinId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: izinId !== null && izinId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listIzinAttachments>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListIzinAttachmentsQueryResult = NonNullable<Awaited<ReturnType<typeof listIzinAttachments>>>
+export type ListIzinAttachmentsQueryError = ErrorType<Error>
+
+
+/**
+ * @summary List attachments for an izin
+ */
+
+export function useListIzinAttachments<TData = Awaited<ReturnType<typeof listIzinAttachments>>, TError = ErrorType<Error>>(
+ izinId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listIzinAttachments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListIzinAttachmentsQueryOptions(izinId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateIzinAttachmentUrl = (izinId: number,) => {
+
+
+
+
+  return `/api/izin/${izinId}/attachments`
+}
+
+/**
+ * @summary Register an uploaded attachment against an izin
+ */
+export const createIzinAttachment = async (izinId: number,
+    attachmentInput: AttachmentInput, options?: RequestInit): Promise<Attachment> => {
+
+  return customFetch<Attachment>(getCreateIzinAttachmentUrl(izinId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(attachmentInput)
+  }
+);}
+
+
+
+
+export const getCreateIzinAttachmentMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createIzinAttachment>>, TError,{izinId: number;data: BodyType<AttachmentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createIzinAttachment>>, TError,{izinId: number;data: BodyType<AttachmentInput>}, TContext> => {
+
+const mutationKey = ['createIzinAttachment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createIzinAttachment>>, {izinId: number;data: BodyType<AttachmentInput>}> = (props) => {
+          const {izinId,data} = props ?? {};
+
+          return  createIzinAttachment(izinId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateIzinAttachmentMutationResult = NonNullable<Awaited<ReturnType<typeof createIzinAttachment>>>
+    export type CreateIzinAttachmentMutationBody = BodyType<AttachmentInput>
+    export type CreateIzinAttachmentMutationError = ErrorType<Error>
+
+    /**
+ * @summary Register an uploaded attachment against an izin
+ */
+export const useCreateIzinAttachment = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createIzinAttachment>>, TError,{izinId: number;data: BodyType<AttachmentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createIzinAttachment>>,
+        TError,
+        {izinId: number;data: BodyType<AttachmentInput>},
+        TContext
+      > => {
+      return useMutation(getCreateIzinAttachmentMutationOptions(options));
+    }
+
+export const getListBasisPermitAttachmentsUrl = (basisPermitId: number,) => {
+
+
+
+
+  return `/api/basis-permits/${basisPermitId}/attachments`
+}
+
+/**
+ * @summary List attachments for a basis permit
+ */
+export const listBasisPermitAttachments = async (basisPermitId: number, options?: RequestInit): Promise<Attachment[]> => {
+
+  return customFetch<Attachment[]>(getListBasisPermitAttachmentsUrl(basisPermitId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListBasisPermitAttachmentsQueryKey = (basisPermitId: number,) => {
+    return [
+    `/api/basis-permits/${basisPermitId}/attachments`
+    ] as const;
+    }
+
+
+export const getListBasisPermitAttachmentsQueryOptions = <TData = Awaited<ReturnType<typeof listBasisPermitAttachments>>, TError = ErrorType<Error>>(basisPermitId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listBasisPermitAttachments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListBasisPermitAttachmentsQueryKey(basisPermitId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listBasisPermitAttachments>>> = ({ signal }) => listBasisPermitAttachments(basisPermitId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: basisPermitId !== null && basisPermitId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listBasisPermitAttachments>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListBasisPermitAttachmentsQueryResult = NonNullable<Awaited<ReturnType<typeof listBasisPermitAttachments>>>
+export type ListBasisPermitAttachmentsQueryError = ErrorType<Error>
+
+
+/**
+ * @summary List attachments for a basis permit
+ */
+
+export function useListBasisPermitAttachments<TData = Awaited<ReturnType<typeof listBasisPermitAttachments>>, TError = ErrorType<Error>>(
+ basisPermitId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listBasisPermitAttachments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListBasisPermitAttachmentsQueryOptions(basisPermitId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateBasisPermitAttachmentUrl = (basisPermitId: number,) => {
+
+
+
+
+  return `/api/basis-permits/${basisPermitId}/attachments`
+}
+
+/**
+ * @summary Register an uploaded attachment against a basis permit
+ */
+export const createBasisPermitAttachment = async (basisPermitId: number,
+    attachmentInput: AttachmentInput, options?: RequestInit): Promise<Attachment> => {
+
+  return customFetch<Attachment>(getCreateBasisPermitAttachmentUrl(basisPermitId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(attachmentInput)
+  }
+);}
+
+
+
+
+export const getCreateBasisPermitAttachmentMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBasisPermitAttachment>>, TError,{basisPermitId: number;data: BodyType<AttachmentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createBasisPermitAttachment>>, TError,{basisPermitId: number;data: BodyType<AttachmentInput>}, TContext> => {
+
+const mutationKey = ['createBasisPermitAttachment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createBasisPermitAttachment>>, {basisPermitId: number;data: BodyType<AttachmentInput>}> = (props) => {
+          const {basisPermitId,data} = props ?? {};
+
+          return  createBasisPermitAttachment(basisPermitId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateBasisPermitAttachmentMutationResult = NonNullable<Awaited<ReturnType<typeof createBasisPermitAttachment>>>
+    export type CreateBasisPermitAttachmentMutationBody = BodyType<AttachmentInput>
+    export type CreateBasisPermitAttachmentMutationError = ErrorType<Error>
+
+    /**
+ * @summary Register an uploaded attachment against a basis permit
+ */
+export const useCreateBasisPermitAttachment = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBasisPermitAttachment>>, TError,{basisPermitId: number;data: BodyType<AttachmentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createBasisPermitAttachment>>,
+        TError,
+        {basisPermitId: number;data: BodyType<AttachmentInput>},
+        TContext
+      > => {
+      return useMutation(getCreateBasisPermitAttachmentMutationOptions(options));
+    }
+
+export const getDeleteAttachmentUrl = (id: number,) => {
+
+
+
+
+  return `/api/attachments/${id}`
+}
+
+/**
+ * @summary Delete an attachment and its stored file
+ */
+export const deleteAttachment = async (id: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteAttachmentUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteAttachmentMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteAttachment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAttachment>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteAttachment(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAttachmentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAttachment>>>
+
+    export type DeleteAttachmentMutationError = ErrorType<Error>
+
+    /**
+ * @summary Delete an attachment and its stored file
+ */
+export const useDeleteAttachment = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAttachment>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteAttachmentMutationOptions(options));
     }
 
 export const getListReportsUrl = (params?: ListReportsParams,) => {

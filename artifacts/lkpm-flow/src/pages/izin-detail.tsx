@@ -11,6 +11,7 @@ import {
   type BasisPermitStatus,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { AttachmentsSection } from "@/components/attachments-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -498,6 +499,10 @@ export default function IzinDetail() {
             </TableBody>
           </Table>
         </div>
+      </div>
+
+      <div className="mt-8">
+        <AttachmentsSection parent={{ kind: "izin", id: izin.id }} />
       </div>
     </div>
   );

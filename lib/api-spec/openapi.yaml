@@ -22,6 +22,8 @@ tags:
     description: Audit trail entries for reports
   - name: basisPermits
     description: Perizinan dasar OSS RBA (KKPR, Persetujuan Lingkungan, PBG, SLF, dll.) per Izin
+  - name: attachments
+    description: Lampiran dokumen bukti (unggah & simpan file) untuk Laporan, Izin, atau perizinan dasar
   - name: dashboard
     description: Aggregated dashboards and compliance views
   - name: anthropic
@@ -377,6 +379,224 @@ paths:
       operationId: deleteBasisPermit
       tags: [basisPermits]
       summary: Delete a basis permit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [attachments]
+      summary: Request a presigned URL to upload a file to private object storage
+      description: >-
+        Validates file type and size, then returns a short-lived presigned PUT
+        URL and the normalized object path. The client uploads the file directly
+        to the URL; no file bytes pass through this API.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: Presigned upload target
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "400":
+          description: Invalid file (type or size)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reports/{reportId}/attachments:
+    get:
+      operationId: listReportAttachments
+      tags: [attachments]
+      summary: List attachments for a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of attachments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createReportAttachment
+      tags: [attachments]
+      summary: Register an uploaded attachment against a report
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /izin/{izinId}/attachments:
+    get:
+      operationId: listIzinAttachments
+      tags: [attachments]
+      summary: List attachments for an izin
+      parameters:
+        - name: izinId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of attachments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createIzinAttachment
+      tags: [attachments]
+      summary: Register an uploaded attachment against an izin
+      parameters:
+        - name: izinId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /basis-permits/{basisPermitId}/attachments:
+    get:
+      operationId: listBasisPermitAttachments
+      tags: [attachments]
+      summary: List attachments for a basis permit
+      parameters:
+        - name: basisPermitId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of attachments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createBasisPermitAttachment
+      tags: [attachments]
+      summary: Register an uploaded attachment against a basis permit
+      parameters:
+        - name: basisPermitId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /attachments/{id}:
+    delete:
+      operationId: deleteAttachment
+      tags: [attachments]
+      summary: Delete an attachment and its stored file
       parameters:
         - name: id
           in: path
@@ -2437,3 +2657,86 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FlaggedIzinPermits"
+
+    UploadUrlRequest:
+      type: object
+      required:
+        - fileName
+        - size
+        - contentType
+      properties:
+        fileName:
+          type: string
+          minLength: 1
+        size:
+          type: integer
+          minimum: 1
+          description: File size in bytes
+        contentType:
+          type: string
+          minLength: 1
+    UploadUrlResponse:
+      type: object
+      required:
+        - uploadURL
+        - objectPath
+      properties:
+        uploadURL:
+          type: string
+          description: Short-lived presigned PUT URL to upload the file to
+        objectPath:
+          type: string
+          description: Normalized "/objects/..." path to persist as the attachment reference
+
+    Attachment:
+      type: object
+      required:
+        - id
+        - fileName
+        - contentType
+        - size
+        - uploadedBy
+        - createdAt
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: ["integer", "null"]
+        izinId:
+          type: ["integer", "null"]
+        basisPermitId:
+          type: ["integer", "null"]
+        fileName:
+          type: string
+        contentType:
+          type: string
+        size:
+          type: integer
+          description: File size in bytes
+        uploadedBy:
+          type: string
+          description: Consultant/user who uploaded the file
+        createdAt:
+          type: string
+          format: date-time
+    AttachmentInput:
+      type: object
+      required:
+        - fileName
+        - contentType
+        - size
+        - objectPath
+      properties:
+        fileName:
+          type: string
+          minLength: 1
+        contentType:
+          type: string
+          minLength: 1
+        size:
+          type: integer
+          minimum: 1
+        objectPath:
+          type: string
+          minLength: 1
+          description: Normalized "/objects/..." path returned by /uploads/request-url

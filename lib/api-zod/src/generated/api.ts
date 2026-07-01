@@ -390,6 +390,199 @@ export const DeleteBasisPermitResponse = zod.void()
 
 
 /**
+ * Validates file type and size, then returns a short-lived presigned PUT URL and the normalized object path. The client uploads the file directly to the URL; no file bytes pass through this API.
+ * @summary Request a presigned URL to upload a file to private object storage
+ */
+
+
+
+
+
+export const RequestUploadUrlBody = zod.object({
+  "fileName": zod.string().min(1),
+  "size": zod.number().min(1).describe('File size in bytes'),
+  "contentType": zod.string().min(1)
+})
+
+export const RequestUploadUrlResponse = zod.object({
+  "uploadURL": zod.string().describe('Short-lived presigned PUT URL to upload the file to'),
+  "objectPath": zod.string().describe('Normalized \"\/objects\/...\" path to persist as the attachment reference')
+})
+
+
+/**
+ * @summary List attachments for a report
+ */
+export const ListReportAttachmentsParams = zod.object({
+  "reportId": zod.coerce.number()
+})
+
+export const ListReportAttachmentsResponseItem = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullish(),
+  "izinId": zod.number().nullish(),
+  "basisPermitId": zod.number().nullish(),
+  "fileName": zod.string(),
+  "contentType": zod.string(),
+  "size": zod.number().describe('File size in bytes'),
+  "uploadedBy": zod.string().describe('Consultant\/user who uploaded the file'),
+  "createdAt": zod.coerce.date()
+})
+export const ListReportAttachmentsResponse = zod.array(ListReportAttachmentsResponseItem)
+
+
+/**
+ * @summary Register an uploaded attachment against a report
+ */
+export const CreateReportAttachmentParams = zod.object({
+  "reportId": zod.coerce.number()
+})
+
+
+
+
+
+
+
+export const CreateReportAttachmentBody = zod.object({
+  "fileName": zod.string().min(1),
+  "contentType": zod.string().min(1),
+  "size": zod.number().min(1),
+  "objectPath": zod.string().min(1).describe('Normalized \"\/objects\/...\" path returned by \/uploads\/request-url')
+})
+
+export const CreateReportAttachmentResponse = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullish(),
+  "izinId": zod.number().nullish(),
+  "basisPermitId": zod.number().nullish(),
+  "fileName": zod.string(),
+  "contentType": zod.string(),
+  "size": zod.number().describe('File size in bytes'),
+  "uploadedBy": zod.string().describe('Consultant\/user who uploaded the file'),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary List attachments for an izin
+ */
+export const ListIzinAttachmentsParams = zod.object({
+  "izinId": zod.coerce.number()
+})
+
+export const ListIzinAttachmentsResponseItem = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullish(),
+  "izinId": zod.number().nullish(),
+  "basisPermitId": zod.number().nullish(),
+  "fileName": zod.string(),
+  "contentType": zod.string(),
+  "size": zod.number().describe('File size in bytes'),
+  "uploadedBy": zod.string().describe('Consultant\/user who uploaded the file'),
+  "createdAt": zod.coerce.date()
+})
+export const ListIzinAttachmentsResponse = zod.array(ListIzinAttachmentsResponseItem)
+
+
+/**
+ * @summary Register an uploaded attachment against an izin
+ */
+export const CreateIzinAttachmentParams = zod.object({
+  "izinId": zod.coerce.number()
+})
+
+
+
+
+
+
+
+export const CreateIzinAttachmentBody = zod.object({
+  "fileName": zod.string().min(1),
+  "contentType": zod.string().min(1),
+  "size": zod.number().min(1),
+  "objectPath": zod.string().min(1).describe('Normalized \"\/objects\/...\" path returned by \/uploads\/request-url')
+})
+
+export const CreateIzinAttachmentResponse = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullish(),
+  "izinId": zod.number().nullish(),
+  "basisPermitId": zod.number().nullish(),
+  "fileName": zod.string(),
+  "contentType": zod.string(),
+  "size": zod.number().describe('File size in bytes'),
+  "uploadedBy": zod.string().describe('Consultant\/user who uploaded the file'),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary List attachments for a basis permit
+ */
+export const ListBasisPermitAttachmentsParams = zod.object({
+  "basisPermitId": zod.coerce.number()
+})
+
+export const ListBasisPermitAttachmentsResponseItem = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullish(),
+  "izinId": zod.number().nullish(),
+  "basisPermitId": zod.number().nullish(),
+  "fileName": zod.string(),
+  "contentType": zod.string(),
+  "size": zod.number().describe('File size in bytes'),
+  "uploadedBy": zod.string().describe('Consultant\/user who uploaded the file'),
+  "createdAt": zod.coerce.date()
+})
+export const ListBasisPermitAttachmentsResponse = zod.array(ListBasisPermitAttachmentsResponseItem)
+
+
+/**
+ * @summary Register an uploaded attachment against a basis permit
+ */
+export const CreateBasisPermitAttachmentParams = zod.object({
+  "basisPermitId": zod.coerce.number()
+})
+
+
+
+
+
+
+
+export const CreateBasisPermitAttachmentBody = zod.object({
+  "fileName": zod.string().min(1),
+  "contentType": zod.string().min(1),
+  "size": zod.number().min(1),
+  "objectPath": zod.string().min(1).describe('Normalized \"\/objects\/...\" path returned by \/uploads\/request-url')
+})
+
+export const CreateBasisPermitAttachmentResponse = zod.object({
+  "id": zod.number(),
+  "reportId": zod.number().nullish(),
+  "izinId": zod.number().nullish(),
+  "basisPermitId": zod.number().nullish(),
+  "fileName": zod.string(),
+  "contentType": zod.string(),
+  "size": zod.number().describe('File size in bytes'),
+  "uploadedBy": zod.string().describe('Consultant\/user who uploaded the file'),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Delete an attachment and its stored file
+ */
+export const DeleteAttachmentParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteAttachmentResponse = zod.void()
+
+
+/**
  * @summary List reports
  */
 export const ListReportsQueryParams = zod.object({

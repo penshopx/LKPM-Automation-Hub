@@ -17,6 +17,7 @@ import { scaleLabels, operatingModeLabels, statusLabels, labelOf } from "@/lib/l
 import { LkpmForm } from "@/components/lkpm-form";
 import { ReadinessPanel } from "@/components/readiness-panel";
 import { ConstraintsSection } from "@/components/constraints-section";
+import { AttachmentsSection } from "@/components/attachments-section";
 import type { Scale } from "@/lib/oss-form";
 
 const STAGES = Object.values(ReportStatus);
@@ -192,6 +193,8 @@ export default function ReportDetail() {
           </div>
         </div>
       </div>
+
+      <AttachmentsSection parent={{ kind: "report", id: reportId }} />
     </div>
   );
 }
