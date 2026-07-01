@@ -12,9 +12,6 @@ channel = "stable-25_05"
 DEFAULT_OBJECT_STORAGE_BUCKET_ID = "replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018"
 PRIVATE_OBJECT_DIR = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/.private"
 PUBLIC_OBJECT_SEARCH_PATHS = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/public"
-CLERK_PUBLISHABLE_KEY = "AIzaSyAdPGow5dDyidEBSu4RIQTdw0rDGdzrvdY"
-CLERK_SECRET_KEY = "sk_test_Cs5NNQIM3bvznvr1BVf1fHzI0SeFrMBZvpokHQZbYY"
-VITE_CLERK_PUBLISHABLE_KEY = "pk_test_bWlnaHR5LWZpbGx5LTgzLmNsZXJrLmFjY291bnRzLmRldiQ"
 
 [workflows]
 runButton = "Project"
