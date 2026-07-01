@@ -60,4 +60,15 @@ externalPort = 80
 [[ports]]
 localPort = 8080
 externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 24225
+externalPort = 3001
+
+[deployment]
+deploymentTarget = "cloudrun"
 # Replit config file - secrets removed
