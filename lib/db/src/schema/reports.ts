@@ -24,6 +24,10 @@ export const reportsTable = pgTable("reports", {
   makerName: text("maker_name"),
   checkerName: text("checker_name"),
   approverName: text("approver_name"),
+  makerId: text("maker_id"),
+  checkerId: text("checker_id"),
+  approverId: text("approver_id"),
+  approvalStatus: text("approval_status").notNull().default("draft"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

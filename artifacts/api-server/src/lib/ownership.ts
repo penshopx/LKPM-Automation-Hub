@@ -7,8 +7,101 @@ import {
   constraintsTable,
   basisPermitsTable,
   attachmentsTable,
+  companySharesTable,
 } from "@workspace/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or, exists, type SQL } from "drizzle-orm";
+
+/**
+ * SQL condition (for use inside a query that already selects from
+ * `companiesTable`) that is true when the user owns the company OR the company
+ * has been explicitly shared with the user. This is the single source of truth
+ * for "who can see this company"; it EXTENDS scoping to shared members without
+ * loosening the owner gate — cross-tenant rows still never match.
+ */
+export function companyAccessCondition(userId: string): SQL {
+  return or(
+    eq(companiesTable.consultantId, userId),
+    exists(
+      db
+        .select({ one: companySharesTable.id })
+        .from(companySharesTable)
+        .where(
+          and(
+            eq(companySharesTable.companyId, companiesTable.id),
+            eq(companySharesTable.memberId, userId),
+          ),
+        ),
+    ),
+  )!;
+}
+
+export async function canAccessCompany(
+  companyId: number,
+  userId: string,
+): Promise<boolean> {
+  const [row] = await db
+    .select({ id: companiesTable.id })
+    .from(companiesTable)
+    .where(and(eq(companiesTable.id, companyId), companyAccessCondition(userId)));
+  return Boolean(row);
+}
+
+export async function canAccessIzin(
+  izinId: number,
+  userId: string,
+): Promise<boolean> {
+  const [row] = await db
+    .select({ id: izinTable.id })
+    .from(izinTable)
+    .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
+    .where(and(eq(izinTable.id, izinId), companyAccessCondition(userId)));
+  return Boolean(row);
+}
+
+export async function canAccessReport(
+  reportId: number,
+  userId: string,
+): Promise<boolean> {
+  const [row] = await db
+    .select({ id: reportsTable.id })
+    .from(reportsTable)
+    .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
+    .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
+    .where(and(eq(reportsTable.id, reportId), companyAccessCondition(userId)));
+  return Boolean(row);
+}
+
+export async function canAccessDataPoint(
+  dataPointId: number,
+  userId: string,
+): Promise<boolean> {
+  const [row] = await db
+    .select({ id: dataPointsTable.id })
+    .from(dataPointsTable)
+    .innerJoin(reportsTable, eq(dataPointsTable.reportId, reportsTable.id))
+    .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
+    .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
+    .where(
+      and(eq(dataPointsTable.id, dataPointId), companyAccessCondition(userId)),
+    );
+  return Boolean(row);
+}
+
+export async function canAccessConstraint(
+  constraintId: number,
+  userId: string,
+): Promise<boolean> {
+  const [row] = await db
+    .select({ id: constraintsTable.id })
+    .from(constraintsTable)
+    .innerJoin(reportsTable, eq(constraintsTable.reportId, reportsTable.id))
+    .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
+    .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
+    .where(
+      and(eq(constraintsTable.id, constraintId), companyAccessCondition(userId)),
+    );
+  return Boolean(row);
+}
 
 export async function companyBelongsToConsultant(
   companyId: number,

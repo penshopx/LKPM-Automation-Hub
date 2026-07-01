@@ -5,6 +5,7 @@
  * LKPM-Flow API — companies, reports, data points, constraints, audit trail, and dashboards for LKPM (Laporan Kegiatan Penanaman Modal) reporting to OSS.
  * OpenAPI spec version: 0.1.0
  */
+import type { ApprovalStatus } from './approvalStatus';
 import type { BusinessScale } from './businessScale';
 import type { OperatingMode } from './operatingMode';
 import type { PeriodType } from './periodType';
@@ -46,5 +47,12 @@ export interface Report {
   checkerName?: string | null;
   /** @nullable */
   approverName?: string | null;
+  /** @nullable */
+  makerId?: string | null;
+  /** @nullable */
+  checkerId?: string | null;
+  /** @nullable */
+  approverId?: string | null;
+  approvalStatus?: ApprovalStatus;
   createdAt: Date;
 }

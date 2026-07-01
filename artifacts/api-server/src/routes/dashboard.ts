@@ -14,6 +14,7 @@ import {
   GetDataQualityResponse,
 } from "@workspace/api-zod";
 import { getConsultantId } from "../middlewares/auth";
+import { companyAccessCondition } from "../lib/ownership";
 
 const router: IRouter = Router();
 
@@ -35,13 +36,13 @@ router.get("/dashboard/summary", async (req, res) => {
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(companiesTable)
-      .where(eq(companiesTable.consultantId, consultantId)),
+      .where(companyAccessCondition(consultantId)),
     db
       .select({ report: reportsTable })
       .from(reportsTable)
       .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
       .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
-      .where(eq(companiesTable.consultantId, consultantId))
+      .where(companyAccessCondition(consultantId))
       .then((rows) => rows.map((r) => r.report)),
     db
       .select({ count: sql<number>`count(*)::int` })
@@ -52,7 +53,7 @@ router.get("/dashboard/summary", async (req, res) => {
       .where(
         and(
           ne(dataPointsTable.status, "terverifikasi"),
-          eq(companiesTable.consultantId, consultantId),
+          companyAccessCondition(consultantId),
         ),
       ),
     db
@@ -61,7 +62,7 @@ router.get("/dashboard/summary", async (req, res) => {
       .innerJoin(reportsTable, eq(dataPointsTable.reportId, reportsTable.id))
       .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
       .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
-      .where(eq(companiesTable.consultantId, consultantId))
+      .where(companyAccessCondition(consultantId))
       .then((rows) => rows.map((r) => r.dp)),
   ]);
 
@@ -134,7 +135,7 @@ router.get("/dashboard/calendar", async (req, res) => {
     .from(reportsTable)
     .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
     .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
-    .where(eq(companiesTable.consultantId, consultantId))
+    .where(companyAccessCondition(consultantId))
     .orderBy(reportsTable.deadline);
   const entries = rows.map((r) => {
     const remaining = daysBetween(r.report.deadline);
@@ -164,7 +165,7 @@ router.get("/dashboard/data-quality", async (req, res) => {
     .innerJoin(reportsTable, eq(dataPointsTable.reportId, reportsTable.id))
     .innerJoin(izinTable, eq(reportsTable.izinId, izinTable.id))
     .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
-    .where(eq(companiesTable.consultantId, consultantId))
+    .where(companyAccessCondition(consultantId))
     .orderBy(dataPointsTable.confidence);
 
   let verifiedCount = 0;

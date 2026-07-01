@@ -18,6 +18,7 @@ import { LkpmForm } from "@/components/lkpm-form";
 import { ReadinessPanel } from "@/components/readiness-panel";
 import { ConstraintsSection } from "@/components/constraints-section";
 import { AttachmentsSection } from "@/components/attachments-section";
+import { ApprovalSection } from "@/components/approval-section";
 import type { Scale } from "@/lib/oss-form";
 
 const STAGES = Object.values(ReportStatus);
@@ -96,11 +97,6 @@ export default function ReportDetail() {
                 <ClipboardCheck className="h-4 w-4 mr-1" /> Pratinjau Formulir OSS
               </Link>
             </Button>
-            <div className="flex flex-col items-end gap-1 text-sm text-muted-foreground">
-              <p>Maker: <span className="font-medium text-foreground">{report.makerName || "-"}</span></p>
-              <p>Checker: <span className="font-medium text-foreground">{report.checkerName || "-"}</span></p>
-              <p>Approver: <span className="font-medium text-foreground">{report.approverName || "-"}</span></p>
-            </div>
           </div>
         </div>
       </div>
@@ -139,6 +135,18 @@ export default function ReportDetail() {
           </div>
         </CardContent>
       </Card>
+
+      <ApprovalSection
+        reportId={reportId}
+        companyId={report.companyId}
+        approvalStatus={report.approvalStatus}
+        makerId={report.makerId}
+        checkerId={report.checkerId}
+        approverId={report.approverId}
+        makerName={report.makerName}
+        checkerName={report.checkerName}
+        approverName={report.approverName}
+      />
 
       <div className="space-y-4">
         <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">

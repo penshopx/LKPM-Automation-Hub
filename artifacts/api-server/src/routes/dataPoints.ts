@@ -15,8 +15,8 @@ import {
 import type { DataPoint } from "@workspace/db";
 import { getConsultantId } from "../middlewares/auth";
 import {
-  dataPointBelongsToConsultant,
-  reportBelongsToConsultant,
+  canAccessDataPoint,
+  canAccessReport,
 } from "../lib/ownership";
 
 const router: IRouter = Router();
@@ -31,7 +31,7 @@ function serialize(row: DataPoint) {
 router.get("/reports/:reportId/data-points", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { reportId } = ListDataPointsParams.parse(req.params);
-  if (!(await reportBelongsToConsultant(reportId, consultantId))) {
+  if (!(await canAccessReport(reportId, consultantId))) {
     res.status(404).json({ error: "Laporan tidak ditemukan" });
     return;
   }
@@ -46,7 +46,7 @@ router.get("/reports/:reportId/data-points", async (req, res) => {
 router.post("/reports/:reportId/data-points", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { reportId } = CreateDataPointParams.parse(req.params);
-  if (!(await reportBelongsToConsultant(reportId, consultantId))) {
+  if (!(await canAccessReport(reportId, consultantId))) {
     res.status(404).json({ error: "Laporan tidak ditemukan" });
     return;
   }
@@ -72,7 +72,7 @@ router.post("/reports/:reportId/data-points", async (req, res) => {
 router.patch("/data-points/:id", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { id } = UpdateDataPointParams.parse(req.params);
-  if (!(await dataPointBelongsToConsultant(id, consultantId))) {
+  if (!(await canAccessDataPoint(id, consultantId))) {
     res.status(404).json({ error: "Data point tidak ditemukan" });
     return;
   }
@@ -102,7 +102,7 @@ router.patch("/data-points/:id", async (req, res) => {
 router.delete("/data-points/:id", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { id } = DeleteDataPointParams.parse(req.params);
-  if (!(await dataPointBelongsToConsultant(id, consultantId))) {
+  if (!(await canAccessDataPoint(id, consultantId))) {
     res.status(404).json({ error: "Data point tidak ditemukan" });
     return;
   }

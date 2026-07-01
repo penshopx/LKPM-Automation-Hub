@@ -25,6 +25,8 @@ import { getConsultantId } from "../middlewares/auth";
 import {
   companyBelongsToConsultant,
   izinBelongsToConsultant,
+  canAccessCompany,
+  companyAccessCondition,
 } from "../lib/ownership";
 
 const router: IRouter = Router();
@@ -36,7 +38,7 @@ function serializeIzin(row: Izin) {
 router.get("/companies/:companyId/izin", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { companyId } = ListIzinParams.parse(req.params);
-  if (!(await companyBelongsToConsultant(companyId, consultantId))) {
+  if (!(await canAccessCompany(companyId, consultantId))) {
     res.status(404).json({ error: "Perusahaan tidak ditemukan" });
     return;
   }
@@ -82,12 +84,7 @@ router.get("/izin/:id", async (req, res) => {
     })
     .from(izinTable)
     .innerJoin(companiesTable, eq(izinTable.companyId, companiesTable.id))
-    .where(
-      and(
-        eq(izinTable.id, id),
-        eq(companiesTable.consultantId, consultantId),
-      ),
-    );
+    .where(and(eq(izinTable.id, id), companyAccessCondition(consultantId)));
   if (!row) {
     res.status(404).json({ error: "Izin tidak ditemukan" });
     return;

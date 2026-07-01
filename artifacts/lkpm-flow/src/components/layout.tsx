@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Building2, FileText, Calendar as CalendarIcon, ShieldAlert, ClipboardList, FileSpreadsheet, BookOpen, MessageSquareText, Printer, Workflow, Map, Database, BookMarked, Clapperboard, Scale, Sparkles, GraduationCap, Headset, CreditCard, LogOut, ChevronDown, Settings } from "lucide-react";
+import { LayoutDashboard, Building2, FileText, Calendar as CalendarIcon, ShieldAlert, ClipboardList, FileSpreadsheet, BookOpen, MessageSquareText, Printer, Workflow, Map, Database, BookMarked, Clapperboard, Scale, Sparkles, GraduationCap, Headset, CreditCard, LogOut, ChevronDown, Settings, Users } from "lucide-react";
 import { useUser, useClerk } from "@clerk/react";
 import { useRole } from "@/lib/role";
 import { NotificationCenter } from "@/components/notification-center";
@@ -62,6 +62,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           icon: Building2,
         },
         { href: "/reports", label: "Laporan LKPM", icon: FileText },
+        { href: "/team", label: "Kolaborasi Tim", icon: Users },
         { href: "/calendar", label: "Kalender", icon: CalendarIcon },
         { href: "/data-quality", label: "Kualitas Data", icon: ShieldAlert },
       ],

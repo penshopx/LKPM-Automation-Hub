@@ -17,7 +17,16 @@ export interface ReportUpdate {
   status?: ReportStatus;
   narrative?: string;
   ossReceipt?: string;
-  makerName?: string;
-  checkerName?: string;
-  approverName?: string;
+  /** @nullable */
+  makerName?: string | null;
+  /** @nullable */
+  checkerName?: string | null;
+  /** @nullable */
+  approverName?: string | null;
+  /** @nullable */
+  makerId?: string | null;
+  /** @nullable */
+  checkerId?: string | null;
+  /** @nullable */
+  approverId?: string | null;
 }

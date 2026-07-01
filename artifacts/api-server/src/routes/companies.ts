@@ -18,6 +18,7 @@ import {
 } from "@workspace/api-zod";
 import type { Company } from "@workspace/db";
 import { getConsultantId } from "../middlewares/auth";
+import { companyAccessCondition } from "../lib/ownership";
 
 const router: IRouter = Router();
 
@@ -31,7 +32,7 @@ function serialize(row: Company) {
 router.get("/companies", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { scale, search } = ListCompaniesQueryParams.parse(req.query);
-  const conditions = [eq(companiesTable.consultantId, consultantId)];
+  const conditions = [companyAccessCondition(consultantId)];
   if (scale) conditions.push(eq(companiesTable.scale, scale));
   if (search)
     conditions.push(
@@ -104,12 +105,7 @@ router.get("/companies/:id", async (req, res) => {
   const [row] = await db
     .select()
     .from(companiesTable)
-    .where(
-      and(
-        eq(companiesTable.id, id),
-        eq(companiesTable.consultantId, consultantId),
-      ),
-    );
+    .where(and(eq(companiesTable.id, id), companyAccessCondition(consultantId)));
   if (!row) {
     res.status(404).json({ error: "Perusahaan tidak ditemukan" });
     return;

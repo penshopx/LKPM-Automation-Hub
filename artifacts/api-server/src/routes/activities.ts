@@ -9,14 +9,14 @@ import {
   CreateActivityResponse,
 } from "@workspace/api-zod";
 import { getConsultantId } from "../middlewares/auth";
-import { reportBelongsToConsultant } from "../lib/ownership";
+import { canAccessReport } from "../lib/ownership";
 
 const router: IRouter = Router();
 
 router.get("/reports/:reportId/activities", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { reportId } = ListActivitiesParams.parse(req.params);
-  if (!(await reportBelongsToConsultant(reportId, consultantId))) {
+  if (!(await canAccessReport(reportId, consultantId))) {
     res.status(404).json({ error: "Laporan tidak ditemukan" });
     return;
   }
@@ -31,7 +31,7 @@ router.get("/reports/:reportId/activities", async (req, res) => {
 router.post("/reports/:reportId/activities", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { reportId } = CreateActivityParams.parse(req.params);
-  if (!(await reportBelongsToConsultant(reportId, consultantId))) {
+  if (!(await canAccessReport(reportId, consultantId))) {
     res.status(404).json({ error: "Laporan tidak ditemukan" });
     return;
   }

@@ -4,8 +4,13 @@ import {
   useGetCompany, getGetCompanyQueryKey,
   useListIzin, getListIzinQueryKey,
   useCreateIzin,
+  useListTeamMembers, getListTeamMembersQueryKey,
+  useListCompanyCollaborators, getListCompanyCollaboratorsQueryKey,
+  useShareCompany,
+  useUnshareCompany,
   type BusinessScale,
   type RiskLevel,
+  type CompanyCollaborator,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Building2, MapPin, Hash, Briefcase, ChevronRight, ShieldCheck, Plus, FileText } from "lucide-react";
+import { Building2, MapPin, Hash, Briefcase, ChevronRight, ShieldCheck, Plus, FileText, Users, Trash2 } from "lucide-react";
 import { scaleLabels, operatingModeLabels, permitTypeLabels, ssStatusLabels, riskLevelLabels, labelOf } from "@/lib/labels";
 import { useToast } from "@/hooks/use-toast";
 
@@ -173,6 +178,170 @@ function NewIzinDialog({ companyId, defaultScale }: { companyId: number; default
   );
 }
 
+function CollaboratorsCard({ companyId }: { companyId: number }) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [open, setOpen] = React.useState(false);
+  const [memberId, setMemberId] = React.useState("");
+
+  // Kartu ini hanya berguna bagi pemilik; anggota berbagi mendapat 404 pada
+  // endpoint kolaborator sehingga kartu tidak ditampilkan untuk mereka.
+  const { data: collaborators, isError } = useListCompanyCollaborators(
+    companyId,
+    {
+      query: {
+        enabled: !!companyId,
+        queryKey: getListCompanyCollaboratorsQueryKey(companyId),
+        retry: false,
+      },
+    },
+  );
+  const { data: teamMembers } = useListTeamMembers({
+    query: { queryKey: getListTeamMembersQueryKey(), retry: false },
+  });
+  const shareCompany = useShareCompany();
+  const unshareCompany = useUnshareCompany();
+
+  if (isError) return null;
+
+  const sharedIds = new Set(
+    (collaborators ?? []).map((c: CompanyCollaborator) => c.userId),
+  );
+  const activeMembers = (teamMembers ?? []).filter(
+    (m) => m.status === "active" && m.memberId && !sharedIds.has(m.memberId),
+  );
+
+  const refresh = () =>
+    queryClient.invalidateQueries({
+      queryKey: getListCompanyCollaboratorsQueryKey(companyId),
+    });
+
+  const handleShare = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!memberId) {
+      toast({ title: "Pilih anggota tim terlebih dahulu", variant: "destructive" });
+      return;
+    }
+    shareCompany.mutate(
+      { companyId, data: { memberId } },
+      {
+        onSuccess: () => {
+          refresh();
+          toast({ title: "Perusahaan dibagikan" });
+          setOpen(false);
+          setMemberId("");
+        },
+        onError: () =>
+          toast({ title: "Gagal membagikan perusahaan", variant: "destructive" }),
+      },
+    );
+  };
+
+  const handleUnshare = (userId: string) => {
+    unshareCompany.mutate(
+      { companyId, memberId: userId },
+      {
+        onSuccess: () => {
+          refresh();
+          toast({ title: "Akses dicabut" });
+        },
+        onError: () =>
+          toast({ title: "Gagal mencabut akses", variant: "destructive" }),
+      },
+    );
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          Akses Tim
+        </CardTitle>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm" variant="outline">
+              <Plus className="h-4 w-4 mr-1" /> Bagikan
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <form onSubmit={handleShare}>
+              <DialogHeader>
+                <DialogTitle>Bagikan Perusahaan</DialogTitle>
+                <DialogDescription>
+                  Pilih anggota tim aktif untuk memberi akses ke perusahaan ini
+                  beserta seluruh izin dan laporannya.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4 space-y-1.5">
+                <Label htmlFor="share-member">Anggota tim</Label>
+                {activeMembers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Tidak ada anggota tim aktif yang tersedia. Undang dan pastikan
+                    mereka menerima undangan di halaman Kolaborasi Tim.
+                  </p>
+                ) : (
+                  <Select value={memberId} onValueChange={setMemberId}>
+                    <SelectTrigger id="share-member">
+                      <SelectValue placeholder="Pilih anggota" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {activeMembers.map((m) => (
+                        <SelectItem key={m.id} value={m.memberId!}>
+                          {m.email}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  disabled={shareCompany.isPending}
+                >
+                  Batal
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={shareCompany.isPending || activeMembers.length === 0}
+                >
+                  {shareCompany.isPending ? "Membagikan..." : "Bagikan"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </CardHeader>
+      <CardContent className="pt-4 space-y-2">
+        {(collaborators ?? []).map((c: CompanyCollaborator) => (
+          <div
+            key={c.userId}
+            className="flex items-center justify-between text-sm"
+          >
+            <span className="flex items-center gap-2">
+              {c.name}
+              {c.isOwner && <Badge variant="secondary">Pemilik</Badge>}
+            </span>
+            {!c.isOwner && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleUnshare(c.userId)}
+                disabled={unshareCompany.isPending}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function CompanyDetail() {
   const { id } = useParams<{ id: string }>();
   const companyId = parseInt(id || "0", 10);
@@ -288,6 +457,8 @@ export default function CompanyDetail() {
             <p className="leading-relaxed">{company.address || "Alamat tidak tersedia."}</p>
           </CardContent>
         </Card>
+
+        <CollaboratorsCard companyId={companyId} />
       </div>
 
       <div className="mt-8">

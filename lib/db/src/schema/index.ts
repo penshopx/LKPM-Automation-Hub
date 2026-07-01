@@ -12,3 +12,5 @@ export * from "./conversations";
 export * from "./messages";
 export * from "./notifications";
 export * from "./notificationPreferences";
+export * from "./teamMembers";
+export * from "./companyShares";

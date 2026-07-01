@@ -193,6 +193,118 @@ export interface NotificationPreferencesUpdate {
   reminderLeadDays?: number[];
 }
 
+export type TeamMemberStatus = typeof TeamMemberStatus[keyof typeof TeamMemberStatus];
+
+
+export const TeamMemberStatus = {
+  pending: 'pending',
+  active: 'active',
+  revoked: 'revoked',
+} as const;
+
+/**
+ * Anggota tim yang diundang oleh pemilik (owner). inviteCode hanya dikembalikan kepada pemilik untuk dibagikan ke calon anggota.
+ */
+export interface TeamMember {
+  id: number;
+  email: string;
+  status: TeamMemberStatus;
+  /**
+     * Clerk userId anggota; terisi setelah undangan diterima
+     * @nullable
+     */
+  memberId?: string | null;
+  /**
+     * Kode undangan untuk diserahkan ke calon anggota
+     * @nullable
+     */
+  inviteCode?: string | null;
+  createdAt: string;
+}
+
+export interface TeamMemberInput {
+  /**
+     * Email/label calon anggota (untuk tampilan)
+     * @minLength 1
+     */
+  email: string;
+}
+
+export interface AcceptInviteInput {
+  /** @minLength 1 */
+  inviteCode: string;
+}
+
+export type AcceptInviteResultStatus = typeof AcceptInviteResultStatus[keyof typeof AcceptInviteResultStatus];
+
+
+export const AcceptInviteResultStatus = {
+  pending: 'pending',
+  active: 'active',
+  revoked: 'revoked',
+} as const;
+
+export interface AcceptInviteResult {
+  ownerId: string;
+  status: AcceptInviteResultStatus;
+}
+
+/**
+ * Pihak yang dapat mengakses sebuah perusahaan (pemilik atau anggota berbagi).
+ */
+export interface CompanyCollaborator {
+  userId: string;
+  /** Email anggota atau label pemilik */
+  name: string;
+  isOwner: boolean;
+  /**
+     * Id baris berbagi (null untuk pemilik)
+     * @nullable
+     */
+  shareId?: number | null;
+}
+
+export interface ShareCompanyInput {
+  /**
+     * Clerk userId anggota tim aktif yang diberi akses
+     * @minLength 1
+     */
+  memberId: string;
+}
+
+/**
+ * Status alur persetujuan maker-checker-approver
+ */
+export type ApprovalStatus = typeof ApprovalStatus[keyof typeof ApprovalStatus];
+
+
+export const ApprovalStatus = {
+  draft: 'draft',
+  submitted: 'submitted',
+  reviewed: 'reviewed',
+  approved: 'approved',
+} as const;
+
+/**
+ * submit = maker mengajukan; review = checker menyetujui tinjauan; approve = approver menyetujui akhir; reject = kembalikan ke draft
+ */
+export type ApprovalActionInputAction = typeof ApprovalActionInputAction[keyof typeof ApprovalActionInputAction];
+
+
+export const ApprovalActionInputAction = {
+  submit: 'submit',
+  review: 'review',
+  approve: 'approve',
+  reject: 'reject',
+} as const;
+
+export interface ApprovalActionInput {
+  /** submit = maker mengajukan; review = checker menyetujui tinjauan; approve = approver menyetujui akhir; reject = kembalikan ke draft */
+  action: ApprovalActionInputAction;
+  /** Catatan opsional untuk jejak audit */
+  note?: string;
+}
+
 export interface ReportDraftInput {
   reportId: number;
   /** Penekanan opsional dari pengguna (mis. fokus realisasi investasi) */
@@ -499,6 +611,13 @@ export interface Report {
   checkerName?: string | null;
   /** @nullable */
   approverName?: string | null;
+  /** @nullable */
+  makerId?: string | null;
+  /** @nullable */
+  checkerId?: string | null;
+  /** @nullable */
+  approverId?: string | null;
+  approvalStatus?: ApprovalStatus;
   createdAt: string;
 }
 
@@ -593,9 +712,18 @@ export interface ReportUpdate {
   status?: ReportStatus;
   narrative?: string;
   ossReceipt?: string;
-  makerName?: string;
-  checkerName?: string;
-  approverName?: string;
+  /** @nullable */
+  makerName?: string | null;
+  /** @nullable */
+  checkerName?: string | null;
+  /** @nullable */
+  approverName?: string | null;
+  /** @nullable */
+  makerId?: string | null;
+  /** @nullable */
+  checkerId?: string | null;
+  /** @nullable */
+  approverId?: string | null;
 }
 
 export interface Izin {

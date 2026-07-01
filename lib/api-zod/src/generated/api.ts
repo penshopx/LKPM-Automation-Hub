@@ -242,6 +242,10 @@ export const GetIzinResponse = zod.object({
   "makerName": zod.string().nullish(),
   "checkerName": zod.string().nullish(),
   "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish(),
+  "approvalStatus": zod.enum(['draft', 'submitted', 'reviewed', 'approved']).optional().describe('Status alur persetujuan maker-checker-approver'),
   "createdAt": zod.coerce.date()
 })),
   "basisPermits": zod.array(zod.object({
@@ -611,6 +615,10 @@ export const ListReportsResponseItem = zod.object({
   "makerName": zod.string().nullish(),
   "checkerName": zod.string().nullish(),
   "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish(),
+  "approvalStatus": zod.enum(['draft', 'submitted', 'reviewed', 'approved']).optional().describe('Status alur persetujuan maker-checker-approver'),
   "createdAt": zod.coerce.date()
 })
 export const ListReportsResponse = zod.array(ListReportsResponseItem)
@@ -654,6 +662,10 @@ export const CreateReportResponse = zod.object({
   "makerName": zod.string().nullish(),
   "checkerName": zod.string().nullish(),
   "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish(),
+  "approvalStatus": zod.enum(['draft', 'submitted', 'reviewed', 'approved']).optional().describe('Status alur persetujuan maker-checker-approver'),
   "createdAt": zod.coerce.date()
 })
 
@@ -690,6 +702,10 @@ export const GetReportResponse = zod.object({
   "makerName": zod.string().nullish(),
   "checkerName": zod.string().nullish(),
   "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish(),
+  "approvalStatus": zod.enum(['draft', 'submitted', 'reviewed', 'approved']).optional().describe('Status alur persetujuan maker-checker-approver'),
   "createdAt": zod.coerce.date()
 }),
   "dataPoints": zod.array(zod.object({
@@ -742,9 +758,12 @@ export const UpdateReportBody = zod.object({
   "status": zod.enum(['intake', 'collect', 'validate', 'draft', 'review', 'submit', 'monitor', 'archive']).optional().describe('Pipeline stage of the report'),
   "narrative": zod.string().optional(),
   "ossReceipt": zod.string().optional(),
-  "makerName": zod.string().optional(),
-  "checkerName": zod.string().optional(),
-  "approverName": zod.string().optional()
+  "makerName": zod.string().nullish(),
+  "checkerName": zod.string().nullish(),
+  "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish()
 })
 
 export const UpdateReportResponse = zod.object({
@@ -766,6 +785,10 @@ export const UpdateReportResponse = zod.object({
   "makerName": zod.string().nullish(),
   "checkerName": zod.string().nullish(),
   "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish(),
+  "approvalStatus": zod.enum(['draft', 'submitted', 'reviewed', 'approved']).optional().describe('Status alur persetujuan maker-checker-approver'),
   "createdAt": zod.coerce.date()
 })
 
@@ -1415,6 +1438,154 @@ export const ClaimBillingCreditsBody = zod.object({
 export const ClaimBillingCreditsResponse = zod.object({
   "granted": zod.number(),
   "available": zod.number()
+})
+
+
+/**
+ * @summary List team members invited by the current owner
+ */
+export const ListTeamMembersResponseItem = zod.object({
+  "id": zod.number(),
+  "email": zod.string(),
+  "status": zod.enum(['pending', 'active', 'revoked']),
+  "memberId": zod.string().nullish().describe('Clerk userId anggota; terisi setelah undangan diterima'),
+  "inviteCode": zod.string().nullish().describe('Kode undangan untuk diserahkan ke calon anggota'),
+  "createdAt": zod.coerce.date()
+}).describe('Anggota tim yang diundang oleh pemilik (owner). inviteCode hanya dikembalikan kepada pemilik untuk dibagikan ke calon anggota.')
+export const ListTeamMembersResponse = zod.array(ListTeamMembersResponseItem)
+
+
+/**
+ * @summary Invite a team member (creates a pending invite)
+ */
+
+
+
+export const InviteTeamMemberBody = zod.object({
+  "email": zod.string().min(1).describe('Email\/label calon anggota (untuk tampilan)')
+})
+
+export const InviteTeamMemberResponse = zod.object({
+  "id": zod.number(),
+  "email": zod.string(),
+  "status": zod.enum(['pending', 'active', 'revoked']),
+  "memberId": zod.string().nullish().describe('Clerk userId anggota; terisi setelah undangan diterima'),
+  "inviteCode": zod.string().nullish().describe('Kode undangan untuk diserahkan ke calon anggota'),
+  "createdAt": zod.coerce.date()
+}).describe('Anggota tim yang diundang oleh pemilik (owner). inviteCode hanya dikembalikan kepada pemilik untuk dibagikan ke calon anggota.')
+
+
+/**
+ * @summary Revoke a team member and their shares
+ */
+export const RemoveTeamMemberParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const RemoveTeamMemberResponse = zod.void()
+
+
+/**
+ * @summary Accept a team invite using an invite code
+ */
+
+
+
+export const AcceptInviteBody = zod.object({
+  "inviteCode": zod.string().min(1)
+})
+
+export const AcceptInviteResponse = zod.object({
+  "ownerId": zod.string(),
+  "status": zod.enum(['pending', 'active', 'revoked'])
+})
+
+
+/**
+ * @summary List collaborators with access to a company
+ */
+export const ListCompanyCollaboratorsParams = zod.object({
+  "companyId": zod.coerce.number()
+})
+
+export const ListCompanyCollaboratorsResponseItem = zod.object({
+  "userId": zod.string(),
+  "name": zod.string().describe('Email anggota atau label pemilik'),
+  "isOwner": zod.boolean(),
+  "shareId": zod.number().nullish().describe('Id baris berbagi (null untuk pemilik)')
+}).describe('Pihak yang dapat mengakses sebuah perusahaan (pemilik atau anggota berbagi).')
+export const ListCompanyCollaboratorsResponse = zod.array(ListCompanyCollaboratorsResponseItem)
+
+
+/**
+ * @summary Share a company with an active team member
+ */
+export const ShareCompanyParams = zod.object({
+  "companyId": zod.coerce.number()
+})
+
+
+
+
+export const ShareCompanyBody = zod.object({
+  "memberId": zod.string().min(1).describe('Clerk userId anggota tim aktif yang diberi akses')
+})
+
+export const ShareCompanyResponse = zod.object({
+  "userId": zod.string(),
+  "name": zod.string().describe('Email anggota atau label pemilik'),
+  "isOwner": zod.boolean(),
+  "shareId": zod.number().nullish().describe('Id baris berbagi (null untuk pemilik)')
+}).describe('Pihak yang dapat mengakses sebuah perusahaan (pemilik atau anggota berbagi).')
+
+
+/**
+ * @summary Remove a member's access to a company
+ */
+export const UnshareCompanyParams = zod.object({
+  "companyId": zod.coerce.number(),
+  "memberId": zod.coerce.string()
+})
+
+export const UnshareCompanyResponse = zod.void()
+
+
+/**
+ * @summary Advance the maker-checker-approver approval flow
+ */
+export const TransitionApprovalParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const TransitionApprovalBody = zod.object({
+  "action": zod.enum(['submit', 'review', 'approve', 'reject']).describe('submit = maker mengajukan; review = checker menyetujui tinjauan; approve = approver menyetujui akhir; reject = kembalikan ke draft'),
+  "note": zod.string().optional().describe('Catatan opsional untuk jejak audit')
+})
+
+export const TransitionApprovalResponse = zod.object({
+  "id": zod.number(),
+  "izinId": zod.number(),
+  "companyId": zod.number(),
+  "companyName": zod.string(),
+  "projectName": zod.string().nullable().describe('Nama proyek dari Izin terkait'),
+  "scale": zod.enum(['mikro', 'kecil', 'menengah', 'besar']).describe('Investment scale determining reporting frequency'),
+  "operatingMode": zod.enum(['pendamping', 'hibrida', 'penuh']).describe('Working mode — UMK companion, hybrid, or full human-in-loop'),
+  "periodType": zod.enum(['triwulan', 'semester', 'tahunan']),
+  "periodLabel": zod.string().describe('e.g. \"TW II 2026\" or \"Semester I 2026\"'),
+  "year": zod.number(),
+  "deadline": zod.coerce.date(),
+  "status": zod.enum(['intake', 'collect', 'validate', 'draft', 'review', 'submit', 'monitor', 'archive']).describe('Pipeline stage of the report'),
+  "idIzin": zod.string().describe('Id Izin \/ NIB project identifier'),
+  "narrative": zod.string().nullish().describe('Overall constraint narrative for the report'),
+  "ossReceipt": zod.string().nullish().describe('OSS submission receipt reference'),
+  "makerName": zod.string().nullish(),
+  "checkerName": zod.string().nullish(),
+  "approverName": zod.string().nullish(),
+  "makerId": zod.string().nullish(),
+  "checkerId": zod.string().nullish(),
+  "approverId": zod.string().nullish(),
+  "approvalStatus": zod.enum(['draft', 'submitted', 'reviewed', 'approved']).optional().describe('Status alur persetujuan maker-checker-approver'),
+  "createdAt": zod.coerce.date()
 })
 
 

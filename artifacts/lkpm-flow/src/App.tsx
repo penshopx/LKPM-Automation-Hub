@@ -28,6 +28,7 @@ import CompanyDetail from "@/pages/company-detail";
 import IzinDetail from "@/pages/izin-detail";
 import Reports from "@/pages/reports";
 import ReportDetail from "@/pages/report-detail";
+import Team from "@/pages/team";
 import OssPreview from "@/pages/oss-preview";
 import Calendar from "@/pages/calendar";
 import DataQuality from "@/pages/data-quality";
@@ -204,6 +205,7 @@ function AuthenticatedApp() {
         <Route path="/reports" component={Reports} />
         <Route path="/reports/:id/oss-preview" component={OssPreview} />
         <Route path="/reports/:id" component={ReportDetail} />
+        <Route path="/team" component={Team} />
         <Route path="/konsultan-online" component={KonsultanOnline} />
         <Route path="/asisten" component={Asisten} />
         <Route path="/mentor" component={Mentor} />

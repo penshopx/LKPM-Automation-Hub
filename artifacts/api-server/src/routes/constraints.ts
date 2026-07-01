@@ -14,8 +14,8 @@ import {
 } from "@workspace/api-zod";
 import { getConsultantId } from "../middlewares/auth";
 import {
-  constraintBelongsToConsultant,
-  reportBelongsToConsultant,
+  canAccessConstraint,
+  canAccessReport,
 } from "../lib/ownership";
 
 const router: IRouter = Router();
@@ -23,7 +23,7 @@ const router: IRouter = Router();
 router.get("/reports/:reportId/constraints", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { reportId } = ListConstraintsParams.parse(req.params);
-  if (!(await reportBelongsToConsultant(reportId, consultantId))) {
+  if (!(await canAccessReport(reportId, consultantId))) {
     res.status(404).json({ error: "Laporan tidak ditemukan" });
     return;
   }
@@ -38,7 +38,7 @@ router.get("/reports/:reportId/constraints", async (req, res) => {
 router.post("/reports/:reportId/constraints", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { reportId } = CreateConstraintParams.parse(req.params);
-  if (!(await reportBelongsToConsultant(reportId, consultantId))) {
+  if (!(await canAccessReport(reportId, consultantId))) {
     res.status(404).json({ error: "Laporan tidak ditemukan" });
     return;
   }
@@ -57,7 +57,7 @@ router.post("/reports/:reportId/constraints", async (req, res) => {
 router.patch("/constraints/:id", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { id } = UpdateConstraintParams.parse(req.params);
-  if (!(await constraintBelongsToConsultant(id, consultantId))) {
+  if (!(await canAccessConstraint(id, consultantId))) {
     res.status(404).json({ error: "Kendala tidak ditemukan" });
     return;
   }
@@ -80,7 +80,7 @@ router.patch("/constraints/:id", async (req, res) => {
 router.delete("/constraints/:id", async (req, res) => {
   const consultantId = getConsultantId(req);
   const { id } = DeleteConstraintParams.parse(req.params);
-  if (!(await constraintBelongsToConsultant(id, consultantId))) {
+  if (!(await canAccessConstraint(id, consultantId))) {
     res.status(404).json({ error: "Kendala tidak ditemukan" });
     return;
   }

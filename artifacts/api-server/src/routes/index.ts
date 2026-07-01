@@ -15,6 +15,7 @@ import helpdeskRouter from "./helpdesk";
 import meRouter from "./me";
 import billingRouter from "./billing";
 import notificationsRouter from "./notifications";
+import teamRouter from "./team";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
@@ -41,5 +42,6 @@ router.use(anthropicRouter);
 router.use(orchestratorRouter);
 router.use(billingRouter);
 router.use(notificationsRouter);
+router.use(teamRouter);
 
 export default router;

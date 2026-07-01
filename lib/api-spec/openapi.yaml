@@ -32,6 +32,8 @@ tags:
     description: Langganan Stripe dan kredit pendampingan AI
   - name: notifications
     description: Pengingat tenggat LKPM dan preferensi notifikasi
+  - name: team
+    description: Kolaborasi tim, keanggotaan, dan berbagi akses perusahaan
 paths:
   /healthz:
     get:
@@ -1405,6 +1407,205 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /team/members:
+    get:
+      operationId: listTeamMembers
+      tags: [team]
+      summary: List team members invited by the current owner
+      responses:
+        "200":
+          description: Team members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamMember"
+    post:
+      operationId: inviteTeamMember
+      tags: [team]
+      summary: Invite a team member (creates a pending invite)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamMemberInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamMember"
+  /team/members/{id}:
+    delete:
+      operationId: removeTeamMember
+      tags: [team]
+      summary: Revoke a team member and their shares
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Removed
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /team/accept:
+    post:
+      operationId: acceptInvite
+      tags: [team]
+      summary: Accept a team invite using an invite code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AcceptInviteInput"
+      responses:
+        "200":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AcceptInviteResult"
+        "404":
+          description: Invalid invite code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /companies/{companyId}/collaborators:
+    get:
+      operationId: listCompanyCollaborators
+      tags: [team]
+      summary: List collaborators with access to a company
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Collaborators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompanyCollaborator"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /companies/{companyId}/shares:
+    post:
+      operationId: shareCompany
+      tags: [team]
+      summary: Share a company with an active team member
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareCompanyInput"
+      responses:
+        "201":
+          description: Shared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCollaborator"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /companies/{companyId}/shares/{memberId}:
+    delete:
+      operationId: unshareCompany
+      tags: [team]
+      summary: Remove a member's access to a company
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Unshared
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /reports/{id}/approval:
+    post:
+      operationId: transitionApproval
+      tags: [reports]
+      summary: Advance the maker-checker-approver approval flow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalActionInput"
+      responses:
+        "200":
+          description: Updated report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "403":
+          description: Not authorized for this approval step
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Invalid transition for current status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   schemas:
     BillingSummary:
@@ -1660,6 +1861,106 @@ components:
             type: integer
             minimum: 0
             maximum: 365
+    TeamMember:
+      type: object
+      description: >-
+        Anggota tim yang diundang oleh pemilik (owner). inviteCode hanya
+        dikembalikan kepada pemilik untuk dibagikan ke calon anggota.
+      required:
+        - id
+        - email
+        - status
+        - createdAt
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, revoked]
+        memberId:
+          type: ["string", "null"]
+          description: Clerk userId anggota; terisi setelah undangan diterima
+        inviteCode:
+          type: ["string", "null"]
+          description: Kode undangan untuk diserahkan ke calon anggota
+        createdAt:
+          type: string
+          format: date-time
+    TeamMemberInput:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          minLength: 1
+          description: Email/label calon anggota (untuk tampilan)
+    AcceptInviteInput:
+      type: object
+      required:
+        - inviteCode
+      properties:
+        inviteCode:
+          type: string
+          minLength: 1
+    AcceptInviteResult:
+      type: object
+      required:
+        - ownerId
+        - status
+      properties:
+        ownerId:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, revoked]
+    CompanyCollaborator:
+      type: object
+      description: Pihak yang dapat mengakses sebuah perusahaan (pemilik atau anggota berbagi).
+      required:
+        - userId
+        - name
+        - isOwner
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+          description: Email anggota atau label pemilik
+        isOwner:
+          type: boolean
+        shareId:
+          type: ["integer", "null"]
+          description: Id baris berbagi (null untuk pemilik)
+    ShareCompanyInput:
+      type: object
+      required:
+        - memberId
+      properties:
+        memberId:
+          type: string
+          minLength: 1
+          description: Clerk userId anggota tim aktif yang diberi akses
+    ApprovalStatus:
+      type: string
+      enum: [draft, submitted, reviewed, approved]
+      description: Status alur persetujuan maker-checker-approver
+    ApprovalActionInput:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum: [submit, review, approve, reject]
+          description: >-
+            submit = maker mengajukan; review = checker menyetujui tinjauan;
+            approve = approver menyetujui akhir; reject = kembalikan ke draft
+        note:
+          type: string
+          description: Catatan opsional untuk jejak audit
     ReportDraftInput:
       type: object
       properties:
@@ -2018,6 +2319,14 @@ components:
           type: ["string", "null"]
         approverName:
           type: ["string", "null"]
+        makerId:
+          type: ["string", "null"]
+        checkerId:
+          type: ["string", "null"]
+        approverId:
+          type: ["string", "null"]
+        approvalStatus:
+          $ref: "#/components/schemas/ApprovalStatus"
         createdAt:
           type: string
           format: date-time
@@ -2094,11 +2403,17 @@ components:
         ossReceipt:
           type: string
         makerName:
-          type: string
+          type: ["string", "null"]
         checkerName:
-          type: string
+          type: ["string", "null"]
         approverName:
-          type: string
+          type: ["string", "null"]
+        makerId:
+          type: ["string", "null"]
+        checkerId:
+          type: ["string", "null"]
+        approverId:
+          type: ["string", "null"]
 
     Izin:
       type: object

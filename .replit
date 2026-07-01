@@ -1,0 +1,62 @@
+modules = ["nodejs-20"]
+[agent]
+expertMode = true
+integrations = ["javascript_gemini_ai_integrations:2.0.0"]
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+DEFAULT_OBJECT_STORAGE_BUCKET_ID = "replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018"
+PRIVATE_OBJECT_DIR = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/.private"
+PUBLIC_OBJECT_SEARCH_PATHS = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/public"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend API"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=5000 BASE_PATH=/ API_PORT=8080 pnpm --filter @workspace/lkpm-flow run dev"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Backend API"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=8080 pnpm --filter @workspace/api-server run dev"
+waitForPort = 8080
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[deployment]
+deploymentTarget = "cloudrun"
+# Replit config file - secrets removed
