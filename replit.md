@@ -12,7 +12,13 @@ Platform pelaporan LKPM-BKPM untuk mengelola Laporan Kegiatan Penanaman Modal (L
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - `pnpm --filter @workspace/scripts run seed` — seed the database with sample data. Set `SEED_CONSULTANT_A` / `SEED_CONSULTANT_B` to real Clerk user IDs so seeded companies show up for those signed-in consultants; otherwise placeholder IDs are used and the demo data stays isolated from real logins.
 - `pnpm --filter @workspace/scripts run backfill-field-keys` — set `fieldKey` on pre-existing data points by catalog match
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required env: `DATABASE_URL` — Postgres connection string (auto-provided by Replit)
+
+## Replit Setup
+
+Configured secrets: `CLERK_SECRET_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`, `GEMINI_API_KEY`, `SESSION_SECRET`.
+
+**Clerk on Replit dev domain**: Clerk dev instances (`pk_test_*`) only allow `localhost` by default. To sign in via the Replit preview URL, add your Replit dev domain to the Clerk dashboard → Configure → Domains → Allowed web origins. The Clerk JS proxy is enabled at `/api/__clerk` (the `clerkProxyMiddleware` at `artifacts/api-server/src/middlewares/clerkProxyMiddleware.ts`) and `VITE_CLERK_PROXY_URL=/api/__clerk` is set as a shared env var. In production this also requires adding the production domain to Clerk dashboard.
 
 ## Stack
 

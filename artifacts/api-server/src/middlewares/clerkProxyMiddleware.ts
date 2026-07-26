@@ -53,15 +53,12 @@ export function getClerkProxyHost(req: {
 }
 
 export function clerkProxyMiddleware(): RequestHandler {
-  // Only run proxy in production — Clerk proxying doesn't work for dev instances
-  if (process.env.NODE_ENV !== "production") {
-    return (_req, _res, next) => next();
-  }
-
   const secretKey = process.env.CLERK_SECRET_KEY;
   if (!secretKey) {
     return (_req, _res, next) => next();
   }
+
+  const isProduction = process.env.NODE_ENV === "production";
 
   return createProxyMiddleware({
     target: CLERK_FAPI,
@@ -73,12 +70,18 @@ export function clerkProxyMiddleware(): RequestHandler {
       path.replace(new RegExp(`^${CLERK_PROXY_PATH}`), ""),
     on: {
       proxyReq: (proxyReq, req) => {
-        const protocol = req.headers["x-forwarded-proto"] || "https";
-        const host = getClerkProxyHost(req) || "";
-        const proxyUrl = `${protocol}://${host}${CLERK_PROXY_PATH}`;
-
-        proxyReq.setHeader("Clerk-Proxy-Url", proxyUrl);
-        proxyReq.setHeader("Clerk-Secret-Key", secretKey);
+        // In production, send Clerk-Proxy-Url + Clerk-Secret-Key so Clerk
+        // validates the proxy domain against the dashboard configuration.
+        // In development these headers cause 400s unless the dev domain is
+        // also registered in the Clerk dashboard, so we skip them. The CDN
+        // assets (/npm/*) still load fine without them.
+        if (isProduction) {
+          const protocol = req.headers["x-forwarded-proto"] || "https";
+          const host = getClerkProxyHost(req) || "";
+          const proxyUrl = `${protocol}://${host}${CLERK_PROXY_PATH}`;
+          proxyReq.setHeader("Clerk-Proxy-Url", proxyUrl);
+          proxyReq.setHeader("Clerk-Secret-Key", secretKey);
+        }
 
         const xff = req.headers["x-forwarded-for"];
         const clientIp =

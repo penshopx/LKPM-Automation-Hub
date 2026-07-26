@@ -12,6 +12,7 @@ channel = "stable-25_05"
 DEFAULT_OBJECT_STORAGE_BUCKET_ID = "replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018"
 PRIVATE_OBJECT_DIR = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/.private"
 PUBLIC_OBJECT_SEARCH_PATHS = "/replit-objstore-65edfa2b-a5a8-48d4-8aa7-f4f5a8525018/public"
+VITE_CLERK_PROXY_URL = "/api/__clerk"
 
 [workflows]
 runButton = "Project"
@@ -56,6 +57,10 @@ outputType = "console"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
 
 [[ports]]
 localPort = 8081
