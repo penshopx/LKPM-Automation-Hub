@@ -62,8 +62,12 @@ const clerkPubKey = publishableKeyFromHost(
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
 );
 
-// REQUIRED — copy verbatim. Empty in dev, auto-set in prod.
-const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
+// REQUIRED — copy verbatim. In dev, skip the proxy so Clerk JS talks directly
+// to the FAPI (the dev domain is registered in Clerk's allowed web origins).
+// In production the proxy is required to avoid DNS CNAME configuration.
+const clerkProxyUrl = import.meta.env.DEV
+  ? undefined
+  : import.meta.env.VITE_CLERK_PROXY_URL;
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
